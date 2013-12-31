@@ -1,7 +1,7 @@
 RL-Dice
 =======
 
-A module to be used with conventional Roguelike dice strings.
+A module to be used with conventional Roguelike dice.
 
 USAGE
 -----
