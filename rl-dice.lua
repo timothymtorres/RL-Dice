@@ -10,9 +10,9 @@ Dice = {}
         
         Examples:
         
-                 1d6 = Roll 1 six sided die
-                 3d4 = Roll 3 dice with four sides
-         2d4+1 = Roll 2 dice with four sides, add +1 to last roll
+            1d6 = Roll 1 six sided die
+            3d4 = Roll 3 dice with four sides
+          2d4+1 = Roll 2 dice with four sides, add +1 to last roll
          3d3++1 = Roll 3 dice with three sides, add +1 to all rolls
          3d3--1 = Roll 3 dice with three sides, add -1 to all rolls
          2d6^+2 = Roll 4 dice with six sides, remove the two lowest rolls
@@ -54,8 +54,8 @@ end
 
 function Dice.roll(dice)
     	if type(dice) == 'string' then
-		dice = Dice.getDice(dice)
-        	return {determine(dice.num, dice.faces, dice.bonus, dice.double, dice.rerolls)}
+	        dice = Dice.getDice(dice)
+                return {determine(dice.num, dice.faces, dice.bonus, dice.double, dice.rerolls)}
 	elseif type(dice) == 'number' then
 		return {math.random(1, dice)}
 	elseif type(dice) == 'table' then
