@@ -12,9 +12,41 @@ First load the module:
 
 Then to use, it is really simple:
 
-    print(Dice.roll('3d6')) -- 2,6,5
+    print(Dice.roll(8)                                              -- {2} (ie. math.random(1, num))
+    print(Dice.roll({num=5,faces=3})                                -- {3, 1, 1, 2, 3}
+    print(Dice.roll('3d6'))                                         -- {2,6,5}
+    print(Dice.getString({num=3, faces=6}))                         -- '3d6'    
+    print(Dice.getDice('3d6'))                                      -- {num=3, faces=6}    
+    print(Dice.roll(Dice.getDice(Dice.getString({num=3, faces=6}))) -- {2,6,1}
+    print(Dice.roll(Dice.getString(Dice.getDice('3d6'))))           -- {2,6,1}
+There are also additional dice roll methods not normally seen in roguelikes, like applying bonuses to all dice, or rerolls.
 
-There are also additional methods not normally seen in roguelikes, like applying bonuses to all dice, or rerolls.
+Methods
+-------
+
+Dice.roll(num/string/dice_tbl)
+
+    returns {table array with dice rolls starting at [1]}
+
+Dice.getString(dice_tbl)
+
+    returns "formatted dice string"
+
+Dice.getDice(str)
+
+    returns {formatted dice table}
+
+
+Dice Table
+----------
+
+    dice = {
+    	num = (+)number, 
+    	faces = (+)number, 
+    	bonus = (+ or -)number,    -- optional
+    	double = binary,           -- optional (requires bonus)
+    	rerolls = (+ or -)number   -- optional
+    }
 
 Dice Index
 ----------
@@ -40,7 +72,7 @@ Examples:
 Remember!
 ---------
 
-* The variable needs to be in string format!
+* Error message will result if dice are incorrectly formatted.
 * You must put a pos or neg sign in front of the bonus or reroll! (if you are going to use them)
-* Double sign, bonus value, and rerolls are optional.
+* Double sign, bonus value, and rerolls are optional, but number of dice and dice faces are NOT!
 
