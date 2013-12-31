@@ -2,21 +2,21 @@ Dice = {}
 
 --[[-- DICE INDEX -----
 {x}d{y}+{s}{z}^{r}
-        x - number of dice being rolled
-        y - faces of the dice
-        z - a value to be added to the result (can be negative)
-        r - rerolls, if + then remove lowest rolls, if - then remove highest rolls
-        s - if double sign (++ or --) adds {z} value to all dice rolls (default is last roll)
-        
-        Examples:
-        
-            1d6 = Roll 1 six sided die
-            3d4 = Roll 3 dice with four sides
-          2d4+1 = Roll 2 dice with four sides, add +1 to last roll
-         3d3++1 = Roll 3 dice with three sides, add +1 to all rolls
-         3d3--1 = Roll 3 dice with three sides, add -1 to all rolls
-         2d6^+2 = Roll 4 dice with six sides, remove the two lowest rolls
-       3d4-2^-1 = Roll 3 dice with four sides, remove the highest roll, add -1 to last roll
+    x - number of dice being rolled
+    y - faces of the dice
+    z - a value to be added to the result (can be negative)
+    r - rerolls, if + then remove lowest rolls, if - then remove highest rolls
+    s - if double sign (++ or --) adds {z} value to all dice rolls (default is last roll)
+    
+    Examples:
+    
+        1d6 = Roll 1 six sided die
+        3d4 = Roll 3 dice with four sides
+      2d4+1 = Roll 2 dice with four sides, add +1 to last roll
+     3d3++1 = Roll 3 dice with three sides, add +1 to all rolls
+     3d3--1 = Roll 3 dice with three sides, add -1 to all rolls
+     2d6^+2 = Roll 4 dice with six sides, remove the two lowest rolls
+   3d4-2^-1 = Roll 3 dice with four sides, remove the highest roll, add -1 to last roll
 ------ FINISH --]]--
 
 local function shuffle(tab)
