@@ -53,18 +53,18 @@ local function determine(num_dice, dice_faces, bonus, double_sign, rerolls)
 end
 
 function Dice.roll(dice)
-    	if type(dice) == 'string' then
+    if type(dice) == 'string' then
 		dice = Dice.getDice(dice)
-        	return determine(dice.num, dice.faces, dice.bonus, dice.double, dice.rerolls)
+        return {determine(dice.num, dice.faces, dice.bonus, dice.double, dice.rerolls)}
 	elseif type(dice) == 'number' then
-		return math.random(1, dice)
+		return {math.random(1, dice)}
 	elseif type(dice) == 'table' then
-		return determine(dice.num, dice.faces, dice.bonus, dice.double, dice.rerolls)        
+		return {determine(dice.num, dice.faces, dice.bonus, dice.double, dice.rerolls)}      
 	end	
 end
 
 function Dice.getDice(str)
-	if not str:match('%d+[d]%d+') then return error("dice string expected") end
+	if not str:match('%d+[d]%d+') then return error("Dice string incorrectly formatted.") end
 	local dice = {}
 	dice.num = tonumber(str:match('%d+')) or 0
 	if not (dice.num > 0) then return error('No dice to roll?') end -- if no dice then exit
@@ -82,8 +82,11 @@ function Dice.getDice(str)
 	return dice
 end
 
-function Dice.getString(num_dice, dice_faces, bonus, double_sign, rerolls)
-	if not num_dice or not dice_faces then return error('Dice string incorrectly formated.  Missing num_dice or dice_faces') end
+function Dice.getString(dice_tbl)
+	local num_dice, dice_faces, bonus, double_sign, rerolls = dice_tbl.num, dice_tbl.faces, dice_tbl.bonus, dice_tbl.double, dice_tbl.rerolls
+	if not num_dice or not dice_faces then return error('Dice string incorrectly formatted.  Missing num_dice or dice_faces.') 
+	elseif double_sign and not bonus then return error('Dice string incorrectly formatted. Double_sign exists but missing bonus.') end
+	
 	local str = ''
 	
 	rerolls = rerolls and '^'..string.format('%+d', rerolls) or ''	
