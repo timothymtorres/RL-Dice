@@ -53,9 +53,9 @@ local function determine(num_dice, dice_faces, bonus, double_sign, rerolls)
 end
 
 function Dice.roll(dice)
-    if type(dice) == 'string' then
+    	if type(dice) == 'string' then
 		dice = Dice.getDice(dice)
-        return {determine(dice.num, dice.faces, dice.bonus, dice.double, dice.rerolls)}
+        	return {determine(dice.num, dice.faces, dice.bonus, dice.double, dice.rerolls)}
 	elseif type(dice) == 'number' then
 		return {math.random(1, dice)}
 	elseif type(dice) == 'table' then
