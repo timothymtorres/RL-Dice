@@ -16,46 +16,46 @@ Dice = {}
          3d3++1 = Roll 3 dice with three sides, add +1 to all rolls
          3d3--1 = Roll 3 dice with three sides, add -1 to all rolls
          2d6^+2 = Roll 4 dice with six sides, remove the two lowest rolls
-         3d4-2^-1 = Roll 3 dice with four sides, remove the highest roll, add -1 to last roll
+       3d4-2^-1 = Roll 3 dice with four sides, remove the highest roll, add -1 to last roll
 ------ FINISH --]]--
 
 local function shuffle(tab)
-  local len = #tab
-  local r
-  for i = 1, len do
-    r = math.random(i, len)
-    tab[i], tab[r] = tab[r], tab[i]
-  end
+	local len = #tab
+	local r
+	for i = 1, len do
+		r = math.random(i, len)
+		tab[i], tab[r] = tab[r], tab[i]
+	end
 end
 
 local function determine(num_dice, dice_faces, bonus, double_sign, rerolls)        
-        local rolls = {}
-        local rerolls = rerolls or 0
-        local bonus_all = double_sign and bonus or 0
-        
-        for i=1, num_dice + math.abs(rerolls) do
-                rolls[i] = math.random(1, dice_faces) + bonus_all
-        end
-        
-        if rerolls ~= 0 then
-                -- sort and if reroll is + then remove lowest rolls, if reroll is - then remove highest rolls
-                if rerolls > 0 then table.sort(rolls, function(a,b) return a>b end) else table.sort(rolls) end
-                for i=num_dice + 1, #rolls do rolls[i] = nil end
-                shuffle(rolls) -- to make the rolls random and out of order
-        end
-        
-        
-        if not double_sign and bonus then
-                rolls[#rolls] = rolls[#rolls] + bonus -- adds bonus to last roll by default
-        end
-        
-        return unpack(rolls)
+	local rolls = {}
+	local rerolls = rerolls or 0
+	local bonus_all = double_sign and bonus or 0
+	
+	for i=1, num_dice + math.abs(rerolls) do
+		rolls[i] = math.random(1, dice_faces) + bonus_all
+	end
+	
+	if rerolls ~= 0 then
+		-- sort and if reroll is + then remove lowest rolls, if reroll is - then remove highest rolls
+		if rerolls > 0 then table.sort(rolls, function(a,b) return a>b end) else table.sort(rolls) end
+		for i=num_dice + 1, #rolls do rolls[i] = nil end
+		shuffle(rolls) -- to make the rolls random and out of order
+	end
+	
+	
+	if not double_sign and bonus then
+		rolls[#rolls] = rolls[#rolls] + bonus -- adds bonus to last roll by default
+	end
+	
+	return unpack(rolls)
 end
 
 function Dice.roll(dice)
-    	if type(dice) == 'string' then
-	        dice = Dice.getDice(dice)
-                return {determine(dice.num, dice.faces, dice.bonus, dice.double, dice.rerolls)}
+	if type(dice) == 'string' then
+		dice = Dice.getDice(dice)
+		return {determine(dice.num, dice.faces, dice.bonus, dice.double, dice.rerolls)}
 	elseif type(dice) == 'number' then
 		return {math.random(1, dice)}
 	elseif type(dice) == 'table' then
