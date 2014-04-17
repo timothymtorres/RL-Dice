@@ -19,7 +19,7 @@ Then to use, it is really simple:
     print(Dice.getDice('3d6'))                                      -- {num=3, faces=6}    
     print(Dice.roll(Dice.getDice(Dice.getString({num=3, faces=6}))) -- {2,6,1}
     print(Dice.roll(Dice.getString(Dice.getDice('3d6'))))           -- {2,6,1}
-There are also additional dice roll methods not normally seen in roguelikes, like applying bonuses to all dice, or rerolls.
+There are also additional dice roll methods not normally seen in roguelikes, such as applying bonuses to all dice and the ability to reroll dice.
 
 Methods
 -------
@@ -27,6 +27,10 @@ Methods
 Dice.roll(num/string/dice_tbl)
 
     returns {table array with dice rolls starting at [1]}
+
+Dice.chance(decimal)
+
+    returns decimal >= math.random()
 
 Dice.getString(dice_tbl)
 
@@ -44,20 +48,21 @@ Dice Table
     	num = (+)number, 
     	faces = (+)number, 
     	bonus = (+ or -)number,    -- optional
-    	double = binary,           -- optional (requires bonus)
+    	double_b = binary,         -- optional (requires bonus)
     	rerolls = (+ or -)number   -- optional
+    	double_r = binary,         -- optional (requires rerolls) 
     }
 
 Dice Index
 ----------
 
-{x}d{y}+{s}{z}^{r}	
+{x}d{y}+{s}{z}^+{s}{r}	
 
 x - Number of dice  
 y - Faces of the dice	 
 z - Bonus value to be added to the last roll result (can be negative)	 
 r - Rerolls, if + then remove lowest rolls, if - then remove highest rolls  
-s - If double sign (++ or --) adds {z} value to ALL dice rolls  
+s - If double sign (++ or --) adds {z} value to ALL dice rolls and/or {r} rerolls to all dice rolls
 	
 Examples:
 	
@@ -67,6 +72,7 @@ Examples:
 	   3d3++1 = Roll 3 dice with three sides, add +1 to all rolls
 	   3d3--1 = Roll 3 dice with three sides, add -1 to all rolls
 	   2d6^+2 = Roll 4 dice with six sides, remove the two lowest rolls
+	  2d4^++1 = Roll 4 dice with four sides, remove the two lowest rolls
 	 3d4-2^-1 = Roll 3 dice with four sides, remove the highest roll, add -1 to last roll
 	 
 Remember!
