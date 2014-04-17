@@ -3,12 +3,12 @@
 local dice = {}
 
 --[[-- DICE INDEX -----
-{x}d{y}+{s}{z}^{r}
+{x}d{y}+{s}{z}^+{s}{r}
     x - number of dice being rolled
     y - faces of the dice
     z - a value to be added to the result (can be negative)
     r - rerolls, if + then remove lowest rolls, if - then remove highest rolls
-    s - if double sign (++ or --) adds {z} value to all dice rolls (default is last roll)
+    s - if double sign (++ or --) adds {z} value to all dice rolls (default is last roll) or {r} rerolls to all dice rolls
     
     Examples:
     
@@ -18,7 +18,7 @@ local dice = {}
      3d3++1 = Roll 3 dice with three sides, add +1 to all rolls
      3d3--1 = Roll 3 dice with three sides, add -1 to all rolls
      2d6^+2 = Roll 4 dice with six sides, remove the two lowest rolls
-     2d4^++1 = Roll 4 dice with four sides, remove the two lowest rolls
+    2d4^++1 = Roll 4 dice with four sides, remove the two lowest rolls
    3d4-2^-1 = Roll 3 dice with four sides, remove the highest roll, add -1 to last roll
 ------ FINISH --]]--
 
