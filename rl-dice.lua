@@ -68,9 +68,7 @@ function dice.roll(dice)
 end
 
 -- percent must be a decimal (ie. .75 = 75%)
-function dice.chance(percent)
-  return percent >= math.random()
-end
+function dice.chance(percent) return percent >= math.random() end
 
 function dice.getDice(str)
 	if not str:match('%d+[d]%d+') then return error("Dice string incorrectly formatted.") end
@@ -87,8 +85,7 @@ function dice.getDice(str)
 
 	local str_r = str:match('[%^][+-][+-]?%d+') or ''
 
-        dice.double_r = str_r:sub(2,3) == '++' or str_b:sub(2,3) == '--' or nil
--- if ++ or --, then reroll all dice
+        dice.double_r = str_r:sub(2,3) == '++' or str_b:sub(2,3) == '--' or nil  -- if ++ or --, then reroll all dice
 
 	dice.rerolls = tonumber(str_r:match('[+-]%d+'))	
 	return dice
