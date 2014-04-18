@@ -19,6 +19,8 @@ Then to use, it is really simple:
     print(Dice.getDice('3d6'))                                      -- {num=3, faces=6}    
     print(Dice.roll(Dice.getDice(Dice.getString({num=3, faces=6}))) -- {2,6,1}
     print(Dice.roll(Dice.getString(Dice.getDice('3d6'))))           -- {2,6,1}
+    print(Dice.chance(.72))                                         -- true  (math.random() rolled .27)
+    print(Dice.chance(.13))                                         -- false (math.random() rolled .51)
 There are also additional dice roll methods not normally seen in roguelikes, such as applying bonuses to all dice and the ability to reroll dice.
 
 Methods
@@ -107,4 +109,5 @@ Remember!
 * Error message will result if dice are incorrectly formatted.
 * You must put a pos or neg sign in front of the bonus or reroll! (if you are going to use them)
 * Double sign, bonus value, and rerolls are optional, but number of dice and dice faces are NOT!
+* Determining probability with rerolls has been omitted and does not factor into the calculation. (future feature)
 
