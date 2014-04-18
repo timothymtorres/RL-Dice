@@ -3,12 +3,12 @@ RL-Dice
 
 A module to be used with conventional Roguelike dice.
 
-USAGE
+Usage
 -----
 
 First load the module:
 
-    local Dice = require 'rl-dice'
+    local Dice = require('rl-dice')
 
 Then to use, it is really simple:
 
@@ -74,6 +74,32 @@ Examples:
 	   2d6^+2 = Roll 4 dice with six sides, remove the two lowest rolls
 	  2d4^++1 = Roll 4 dice with four sides, remove the two lowest rolls
 	 3d4-2^-1 = Roll 3 dice with four sides, remove the highest roll, add -1 to last roll
+	 
+Probability
+-----------
+
+First load the module:
+
+    local odds = require('dice_odds')
+
+Next then all you do is,
+
+    list = odds('1d6')
+    list = odds(6)
+    list = odds({num=1,faces=6})
+    
+All return the same table containing:
+    
+    list.low = (lowest possible roll)
+    list.high = (highest possible roll)
+    list.average = (average roll)
+    
+Starting at index [low] and ending at index [high] is chance to roll.
+
+    for i=list.low, list.high do 
+      list[i] = (possible roll percent)
+    end  
+
 	 
 Remember!
 ---------
