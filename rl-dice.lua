@@ -1,5 +1,3 @@
--- rl-dice.lua
-
 local dice = {}
 
 --[[-- DICE INDEX -----
