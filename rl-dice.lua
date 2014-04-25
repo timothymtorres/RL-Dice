@@ -19,7 +19,7 @@ dice.__index = dice
      2d6^+2 = Roll 4 dice with six sides, remove the two lowest rolls
     2d4^++1 = Roll 4 dice with four sides, remove the two lowest rolls
    3d4-2^-1 = Roll 3 dice with four sides, remove the highest roll, add -1 to last roll
------- FINISH --]]-----
+------ FINISH --]]--
 
 local function shuffle(tab)
 	local len = #tab
@@ -145,14 +145,14 @@ function dice.getDice(str)
 	dice.faces = tonumber(str_f:sub(2)) or 0
 
 	local str_b = str:match('[^%^+-][+-][+-]?%d+') or ''
-	dice.double_b = str_b:sub(2,3) == '++' or str_b:sub(2,3) == '--' or nil -- if ++ or --, then bonus to all dice
-	dice.bonus = tonumber(str_b:match('[+-]%d+'))
+	dice.double_b = str_b:sub(2,3) == '++' or str_b:sub(2,3) == '--' or false -- if ++ or --, then bonus to all dice
+	dice.bonus = tonumber(str_b:match('[+-]%d+')) or 0
 
 	local str_r = str:match('[%^][+-][+-]?%d+') or ''
 
-  dice.double_r = str_r:sub(2,3) == '++' or str_b:sub(2,3) == '--' or nil -- if ++ or --, then reroll all dice
+  dice.double_r = str_r:sub(2,3) == '++' or str_b:sub(2,3) == '--' or false -- if ++ or --, then reroll all dice
 
-	dice.rerolls = tonumber(str_r:match('[+-]%d+'))	
+	dice.rerolls = tonumber(str_r:match('[+-]%d+')) or 0	
 	return dice
 end
 
