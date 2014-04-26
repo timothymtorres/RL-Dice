@@ -34,10 +34,10 @@ local function determine(num_dice, dice_faces, bonus, double_sign_bonus, rerolls
 	local rolls = {}
 	local rerolls_temp = rerolls or 0
 	local bonus_all = double_sign_bonus and bonus or 0
-  local rerolls = double_sign_rerolls and rerolls_temp*num_dice or rerolls_temp
+	local rerolls = double_sign_rerolls and rerolls_temp*num_dice or rerolls_temp
   
-  -- num_dice & dice_faces CANNOT be negative!
-  local num_dice, dice_faces = math.max(num_dice, 1), math.max(dice_faces, 1)
+	-- num_dice & dice_faces CANNOT be negative!
+	local num_dice, dice_faces = math.max(num_dice, 1), math.max(dice_faces, 1)
 
 	for i=1, num_dice + math.abs(rerolls) do
 		rolls[i] = math.random(1, dice_faces) + bonus_all
@@ -70,29 +70,29 @@ end
 --]]
 
 function dice:new(roll)
-  local roll = (type(roll) == 'table' and roll) or (type(roll) == 'string' and dice.getDice(roll)) or (type(roll) == 'number' and dice.getDice('1d'..roll))
-  self.__index = self
-  return setmetatable(roll, self)
+	local roll = (type(roll) == 'table' and roll) or (type(roll) == 'string' and dice.getDice(roll)) or (type(roll) == 'number' and dice.getDice('1d'..roll))
+	self.__index = self
+	return setmetatable(roll, self)
 end
 
 function dice.__add(roll, value)
-  roll.bonus = roll.bonus + value
-  return dice:new(roll)
+	roll.bonus = roll.bonus + value
+	return dice:new(roll)
 end
 
 function dice.__mul(roll, value)
-  roll.num = roll.num + value
-  return dice:new(roll)  
+	roll.num = roll.num + value
+	return dice:new(roll)  
 end
 
 function dice.__div(roll, value)
-  roll.faces = roll.faces + value
-  return dice:new(roll)  
+	roll.faces = roll.faces + value
+	return dice:new(roll)  
 end
 
 function dice.__pow(roll, value)
-  roll.rerolls = roll.rerolls + value
-  return dice:new(roll)  
+	roll.rerolls = roll.rerolls + value
+	return dice:new(roll)  
 end
 
 function dice.__concat(roll, str)
@@ -100,24 +100,20 @@ function dice.__concat(roll, str)
 	local bonus = ((str_b == '++' or str_b == '--') and 'double') or ((str_b == '+' or str_b == '-') and 'single') or nil
 
 	local str_r = str:match('[%^][%^]?') or ''
-  local reroll = (str_r == '^^' and 'double') or (str_r == '^' and 'single') or nil
+	local reroll = (str_r == '^^' and 'double') or (str_r == '^' and 'single') or nil
   
-  if bonus == 'double' then
-    roll.double_b = true
-  elseif bonus == 'single' then
-    roll.double_b = false
-  end
+	if bonus == 'double' then roll.double_b = true
+	elseif bonus == 'single' then roll.double_b = false
+	end
   
-  if reroll == 'double' then
-    roll.double_r = true
-  elseif reroll == 'single' then
-    roll.double_r = false
-  end
-  return dice:new(roll)
+	if reroll == 'double' then roll.double_r = true
+	elseif reroll == 'single' then roll.double_r = false
+	end
+	return dice:new(roll)
 end
 
 function dice.__tostring(self)
-  return self:getString()
+	return self:getString()
 end  
 
 function dice:roll()
@@ -132,7 +128,7 @@ function dice:roll()
 end
 
 function dice.chance(percent) -- percent must be a decimal (ie. .75 = 75%)
-  return percent >= math.random()
+	return percent >= math.random()
 end
 
 function dice.getDice(str)
@@ -150,7 +146,7 @@ function dice.getDice(str)
 
 	local str_r = str:match('[%^][+-][+-]?%d+') or ''
 
-  dice.double_r = str_r:sub(2,3) == '++' or str_b:sub(2,3) == '--' or false -- if ++ or --, then reroll all dice
+	dice.double_r = str_r:sub(2,3) == '++' or str_b:sub(2,3) == '--' or false -- if ++ or --, then reroll all dice
 
 	dice.rerolls = tonumber(str_r:match('[+-]%d+')) or 0	
 	return dice
@@ -159,17 +155,17 @@ end
 function dice:getString()
 	local num_dice, dice_faces, bonus, double_sign_bonus, rerolls, double_sign_reroll = self.num, self.faces, self.bonus, self.double_b, self.rerolls, self.double_r
   
-  -- num_dice & dice_faces CANNOT be negative!  
-  local num_dice, dice_faces = math.max(num_dice, 1), math.max(dice_faces, 1)
+	-- num_dice & dice_faces CANNOT be negative!  
+	local num_dice, dice_faces = math.max(num_dice, 1), math.max(dice_faces, 1)
   
 	if not num_dice or not dice_faces then return error('Dice string incorrectly formatted.  Missing num_dice or dice_faces.') 
 	elseif double_sign_bonus and not bonus then return error('Dice string incorrectly formatted. Double_sign exists but missing bonus.') end   
   
-  local double_b = double_sign_bonus and (bonus >= 0 and '+' or '-') or ''
-  bonus = (bonus ~= 0 and double_b..string.format('%+d', bonus)) or ''  
+	local double_b = double_sign_bonus and (bonus >= 0 and '+' or '-') or ''
+	bonus = (bonus ~= 0 and double_b..string.format('%+d', bonus)) or ''  
     
-  local double_r = double_sign_reroll and (rerolls >= 0 and '+' or '-') or ''    
-  rerolls = (rerolls ~= 0 and '^'..double_r..string.format('%+d', rerolls)) or ''    
+	local double_r = double_sign_reroll and (rerolls >= 0 and '+' or '-') or ''    
+	rerolls = (rerolls ~= 0 and '^'..double_r..string.format('%+d', rerolls)) or ''    
 
 	return num_dice..'d'..dice_faces..bonus..rerolls
 end
