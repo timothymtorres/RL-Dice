@@ -25,17 +25,6 @@ Examples:
 	  2d4^++1 = Roll 4 dice with four sides, remove the two lowest rolls
 	 3d4-2^-1 = Roll 3 dice with four sides, remove the highest roll, add -1 to last roll
 
-Dice Table
-----------
-
-    dice = {
-    	num = (+)number, 
-    	faces = (+)number, 
-    	bonus = (+ or -)number,    -- optional
-    	double_b = binary,         -- optional (requires bonus)
-    	rerolls = (+ or -)number   -- optional
-    	double_r = binary,         -- optional (requires rerolls) 
-    }
 
 Usage
 -----
@@ -76,6 +65,18 @@ dice.getDice(str)
 
     returns {formatted dice table}
 
+
+Dice Table
+----------
+
+    dice = {
+    	num = (+)number, 
+    	faces = (+)number, 
+    	bonus = (+ or -)number,    -- optional
+    	double_b = binary,         -- optional (requires bonus)
+    	rerolls = (+ or -)number   -- optional
+    	double_r = binary,         -- optional (requires rerolls) 
+    }
 
 Classes & Metamethods
 ---------------------
@@ -123,7 +124,7 @@ Next then all you do is,
 
     list = odds('1d6')
     list = odds(6)
-    list = odds({num=1,faces=6})
+    list = odds(formated_dice_tbl)
     
 All return the same table containing:
     
@@ -137,6 +138,13 @@ Starting at index [low] and ending at index [high] is chance to roll.
       list[i] = (possible roll percent)
     end  
 
+Note - probability is even factored for rerolls and bonus,
+
+    list = odds('1d6^+1')
+    list = odds('1d6+3')
+
+
+It is recommended that you SAVE the probability table and avoid generating it repeatedly as it can consume a lot of CPU when there is many dice, faces, or rerolls.  (ie. something like 100d7^++2)
 	 
 Remember!
 ---------
@@ -145,11 +153,9 @@ Remember!
 * You must put a pos or neg sign in front of the bonus or reroll! (if you are going to use them)
 * Double sign, bonus value, and rerolls are optional, but number of dice and dice faces are NOT!
 * When using dice.roll(), if dice faces or dice num is 0 or neg, it will default to 1.
-* Determining probability with rerolls has been omitted and does not factor into the calculation.
+* It is POSSIBLE to roll negative numbers if a large enough negative dice bonus is present.  
 
 Future Features
 ---------------
 
-* Determine probability with rerolls
-* Save probability results into some kind of temp table?
 * ???
