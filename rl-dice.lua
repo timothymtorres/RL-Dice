@@ -50,10 +50,8 @@ local function determine(num_dice, dice_faces, bonus, double_sign_bonus, rerolls
 		shuffle(rolls) -- to make the rolls random and out of order
 	end
 
-
-	if not double_sign_bonus and bonus then
-		rolls[#rolls] = rolls[#rolls] + bonus -- adds bonus to last roll by default
-	end
+	-- adds bonus to last roll by default
+	if not double_sign_bonus and bonus then rolls[#rolls] = rolls[#rolls] + bonus end
 
 	return table.unpack(rolls)
 end
@@ -75,25 +73,24 @@ function dice:new(roll)
 	return setmetatable(roll, self)
 end
 
-function dice.__add(roll, value)
-	roll.bonus = roll.bonus + value
-	return dice:new(roll)
-end
+function dice:getNum() return self.num end
+function dice:getFaces() return self.faces end
+function dice:getBonus() return self.bonus end
+function dice:getRerolls() return self.rerolls end
+function dice:getTotalBonus() return (self.double_b and self.bonus*self.num) or self.bonus end
+function dice:getTotalRerolls() return (self.double_r and self.rerolls*self.num) or self.rerolls end
+function dice:isDoubleReroll() return self.double_r end
+function dice:isDoubleBonus() return self.double_b end
 
-function dice.__mul(roll, value)
-	roll.num = roll.num + value
-	return dice:new(roll)  
-end
+function dice.__add(roll, value) roll.bonus = roll:getBonus() + value return dice:new(roll) end
 
-function dice.__div(roll, value)
-	roll.faces = roll.faces + value
-	return dice:new(roll)  
-end
+function dice.__mul(roll, value) roll.num = roll:getNum() + value return dice:new(roll) end
 
-function dice.__pow(roll, value)
-	roll.rerolls = roll.rerolls + value
-	return dice:new(roll)  
-end
+function dice.__div(roll, value) roll.faces = roll:getFaces() + value return dice:new(roll) end
+
+function dice.__pow(roll, value) roll.rerolls = roll:getRerolls() + value return dice:new(roll) end
+
+function dice.__tostring(self) return self:getString() end  
 
 function dice.__concat(roll, str)
 	local str_b = str:match('[+-][+-]?') or ''  
@@ -103,18 +100,12 @@ function dice.__concat(roll, str)
 	local reroll = (str_r == '^^' and 'double') or (str_r == '^' and 'single') or nil
   
 	if bonus == 'double' then roll.double_b = true
-	elseif bonus == 'single' then roll.double_b = false
-	end
+	elseif bonus == 'single' then roll.double_b = false end
   
 	if reroll == 'double' then roll.double_r = true
-	elseif reroll == 'single' then roll.double_r = false
-	end
+	elseif reroll == 'single' then roll.double_r = false end
 	return dice:new(roll)
 end
-
-function dice.__tostring(self)
-	return self:getString()
-end  
 
 function dice:roll()
 	if type(self) == 'string' then
@@ -127,9 +118,8 @@ function dice:roll()
 	end
 end
 
-function dice.chance(percent) -- percent must be a decimal (ie. .75 = 75%)
-	return percent >= math.random()
-end
+-- percent must be a decimal (ie. .75 = 75%)
+function dice.chance(percent) return percent >= math.random() end
 
 function dice.getDice(str)
 	if not str:match('%d+[d]%d+') then return error("Dice string incorrectly formatted.") end
@@ -145,8 +135,7 @@ function dice.getDice(str)
 	dice.bonus = tonumber(str_b:match('[+-]%d+')) or 0
 
 	local str_r = str:match('[%^][+-][+-]?%d+') or ''
-
-	dice.double_r = str_r:sub(2,3) == '++' or str_b:sub(2,3) == '--' or false -- if ++ or --, then reroll all dice
+	dice.double_r = str_r:sub(2,3) == '++' or str_r:sub(2,3) == '--' or false -- if ++ or --, then reroll all dice
 
 	dice.rerolls = tonumber(str_r:match('[+-]%d+')) or 0	
 	return dice
