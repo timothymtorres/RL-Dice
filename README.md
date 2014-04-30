@@ -153,7 +153,7 @@ Remember!
 * You must put a pos or neg sign in front of the bonus or reroll! (if you are going to use them)
 * Double sign, bonus value, and rerolls are optional, but number of dice and dice faces are NOT!
 * When using dice.roll(), if dice faces or dice num is 0 or neg, it will default to 1.
-* It is POSSIBLE to roll negative numbers if a large enough negative dice bonus is present.  
+* It is POSSIBLE to roll negative numbers if a negative dice bonus is present.  
 
 Future Features
 ---------------
