@@ -91,7 +91,7 @@ dice.__add [modify bonus]
 
 dice.__mul [modify number of dice]
 
-    weapon = weapon * 3                           -- '3d6+2'
+    weapon = weapon * 2                           -- '3d6+2'
     
 dice.__div [modify dice faces]
 
