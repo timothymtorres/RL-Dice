@@ -1,4 +1,4 @@
-local dice = require('rl-dice')
+local dice = require('dice')
 local total_dice, total_rerolls, total_bonus
 local dice_num, dice_faces
 
