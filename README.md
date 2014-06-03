@@ -31,7 +31,7 @@ Usage
 
 First load the module:
 
-    local dice = require('rl-dice')
+    local dice = require('dice')
 
 Then to use, it is really simple:
 
@@ -118,7 +118,7 @@ Probability
 
 First load the module:
 
-    local odds = require('dice_odds')
+    local odds = require('odds')
 
 Next then all you do is,
 
