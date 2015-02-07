@@ -158,4 +158,10 @@ Remember!
 Future Features
 ---------------
 
-* ???
+DICE SET MULTIPLIER
+
+* New dice method to roll a set of dice multiple times
+* So for instance, a 2d4 dice and multiply the set by 3 would roll (2d4) three times and get the results 
+* Possibly use the % operator, or switch to * or ^ (and rearrange former operators)
+* This will result in the dice results being different.  Instead of 3d4 returning a table with {1d4_result, 1d4_result, 1d4_result, 1d4_result} it will return {3d4_result} instead.  
+* Other methods might be affected (rerolls and bonuses) but have yet to be determined
