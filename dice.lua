@@ -53,7 +53,7 @@ local function determine(num_dice, dice_faces, bonus, double_sign_bonus, rerolls
 	-- adds bonus to last roll by default
 	if not double_sign_bonus and bonus then rolls[#rolls] = rolls[#rolls] + bonus end
 
-	return table.unpack(rolls)
+	return unpack(rolls)
 end
 
 --[[
