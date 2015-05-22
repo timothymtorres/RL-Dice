@@ -36,7 +36,6 @@ local function determine(num_dice, dice_faces, bonus, double_sign_bonus, rerolls
 	local rerolls_temp = rerolls or 0
 	local bonus_all = double_sign_bonus and bonus or 0
 	local rerolls = double_sign_rerolls and rerolls_temp*num_dice or rerolls_temp
-	local minimum = minimum or dice.minimum
   
 	-- num_dice & dice_faces CANNOT be negative!
 	local num_dice, dice_faces = math.max(num_dice, 1), math.max(dice_faces, 1)
@@ -54,11 +53,16 @@ local function determine(num_dice, dice_faces, bonus, double_sign_bonus, rerolls
 
 	-- adds bonus to last roll by default
 	if not double_sign_bonus and bonus then rolls[#rolls] = rolls[#rolls] + bonus end
+
+	-- if minimum is empty then use dice class default min
+	if minimum == nil then minimum = dice.minimum end
 	
 	if minimum then
 		for i=1, num_dice do
-			rolls[i] = math.min(rolls[i],
+			rolls[i] = math.max(rolls[i], minimum)
+		end
 	end
+	
 	return unpack(rolls)
 end
 
@@ -70,6 +74,7 @@ end
       double_b = binary,         -- optional (requires bonus)
       rerolls = (+ or -)number   -- optional
       double_r = binary,         -- optional (requires rerolls) 
+      minimum = number/false/nil -- optional (set false for no minimum, set to nil to use dice class default)
   }
 --]]
 
@@ -80,7 +85,7 @@ function dice:new(roll, minimum)
 	return setmetatable(roll, self)
 end
 
-function dice:setMin(value) dice.minimum = value end
+function dice:setMin(minimum) self.minimum = minimum end
 
 function dice:getNum() return self.num end
 function dice:getFaces() return self.faces end
