@@ -64,6 +64,10 @@ dice.getString(dice_tbl) or dice:getString()
 dice.getDice(str)
 
     returns {formatted dice table}
+    
+dice:setMin(minimum)
+
+    sets the lowest possible roll minimum (number, false to ignore, or nil to use class default (1) )   
 
 
 Dice Table
@@ -76,6 +80,7 @@ Dice Table
     	double_b = binary,         -- optional (requires bonus)
     	rerolls = (+ or -)number   -- optional
     	double_r = binary,         -- optional (requires rerolls) 
+    	minimum = number/false/nil -- optional (set false for no minimum, set to nil to use dice class default)
     }
 
 Classes & Metamethods
@@ -153,7 +158,8 @@ Remember!
 * You must put a pos or neg sign in front of the bonus or reroll! (if you are going to use them)
 * Double sign, bonus value, and rerolls are optional, but number of dice and dice faces are NOT!
 * When using dice.roll(), if dice faces or dice num is 0 or neg, it will default to 1.
-* It is POSSIBLE to roll negative numbers if a negative dice bonus is present.  
+* It is POSSIBLE to roll negative numbers if a negative dice bonus is present.
+* Odds ignore any minimums (will be fixed later)
 
 Future Features
 ---------------
@@ -165,3 +171,6 @@ DICE SET MULTIPLIER
 * Possibly use the % operator, or switch to * or ^ (and rearrange former operators)
 * This will result in the dice results being different.  Instead of 3d4 returning a table with {1d4_result, 1d4_result, 1d4_result, 1d4_result} it will return {3d4_result} instead.  
 * Other methods might be affected (rerolls and bonuses) but have yet to be determined
+* Update odds to include minimums
+* Rearrange the odds/dice folder so that when the file is required the correct path is chossen
+* Make it easier to edit the dice.minimum class default?  
