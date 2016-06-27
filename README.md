@@ -6,13 +6,14 @@ A module to be used with conventional Roguelike dice.
 Dice Index
 ----------
 
-{x}d{y}+{s}{z}^+{s}{r}	
+({x}d{y}+{s}{z}^+{s}{r})x{v}
 
 x - Number of dice  
 y - Faces of the dice	 
 z - Bonus value to be added to the last roll result (can be negative)	 
 r - Rerolls, if + then remove lowest rolls, if - then remove highest rolls  
-s - If double sign (++ or --) adds {z} value to ALL dice rolls and/or {r} rerolls to all dice rolls
+s - If double sign (++ or --) adds {z} value to ALL dice rolls and/or {r} rerolls to all dice rolls  
+v - Sets of dice used
 	
 Examples:
 	
@@ -24,7 +25,14 @@ Examples:
 	   2d6^+2 = Roll 4 dice with six sides, remove the two lowest rolls
 	  2d4^++1 = Roll 4 dice with four sides, remove the two lowest rolls
 	 3d4-2^-1 = Roll 3 dice with four sides, remove the highest roll, add -1 to last roll
-
+	  (1d6)x1 = Roll 1 six sided die (one set)
+	  (1d6)x3 = Roll 1 six sided die (three sets)
+	  
+	  The difference between 3d6 and (1d6)x3 is {3d3} vs {1d6, 1d6, 1d6}
+	  Sets return MULTIPLE results where number of dice only returns a SINGLE result or...
+	  You could use both!
+	  
+	  (3d3)x3 = Roll 3 six sided die (three sets)  {3d3, 3d3, 3d3}
 
 Usage
 -----
@@ -35,13 +43,13 @@ First load the module:
 
 Then to use, it is really simple:
 
-    print(dice.roll(8)                                              -- {2} (ie. math.random(1, num))
-    print(dice.roll({num=5,faces=3})                                -- {3, 1, 1, 2, 3}
-    print(dice.roll('3d6'))                                         -- {2,6,5}
+    print(dice.roll(8))                                             -- 2 (ie. math.random(1, num))
+    print(dice.roll({sets=5,faces=3})                               -- 3, 1, 1, 2, 3
+    print(dice.roll('3d6'))                                         -- 12
     print(dice.getString({num=3, faces=6}))                         -- '3d6'    
     print(dice.getDice('3d6'))                                      -- {num=3, faces=6}    
-    print(dice.roll(Dice.getDice(dice.getString({num=3, faces=6}))) -- {2,6,1}
-    print(dice.roll(Dice.getString(dice.getDice('3d6'))))           -- {2,6,1}
+    print(dice.roll(Dice.getDice(dice.getString({set=3, faces=6}))) -- 2,6,1
+    print(dice.roll(Dice.getString(dice.getDice('(1d6)x3'))))       -- 2,6,1
     print(dice.chance(.72))                                         -- true  (math.random() rolled .27)
     print(dice.chance(.13))                                         -- false (math.random() rolled .51)
 There are also additional dice roll methods not normally seen in roguelikes, such as applying bonuses to all dice and the ability to reroll dice.
@@ -51,7 +59,7 @@ Methods
 
 dice.roll(num/string/dice_tbl) or dice:roll()
 
-    returns {table array with dice rolls starting at [1]}
+    returns set1, set2, set3, etc.
 
 dice.chance(decimal)
 
@@ -65,9 +73,9 @@ dice.getDice(str)
 
     returns {formatted dice table}
     
-dice:setMin(minimum)
+dice.setMin(minimum)
 
-    sets the lowest possible roll minimum (number, false to ignore, or nil to use class default (1) )   
+    sets the lowest possible roll minimum for class default (if nil allows negative results to be rolled)   
 
 
 Dice Table
@@ -76,23 +84,28 @@ Dice Table
     dice = {
     	num = (+)number, 
     	faces = (+)number, 
+    	sets = (+)number,	   -- optional
     	bonus = (+ or -)number,    -- optional
     	double_b = binary,         -- optional (requires bonus)
     	rerolls = (+ or -)number   -- optional
     	double_r = binary,         -- optional (requires rerolls) 
-    	minimum = number/false/nil -- optional (set false for no minimum, set to nil to use dice class default)
+    	minimum = number/nil -- optional (nil results in class default (if any) )
     }
 
 Classes & Metamethods
 ---------------------
 
-dice:new(num/string/dice_tbl) [returns roll obj]
+dice:new(num/string/dice_tbl, minimum) [returns roll obj]
 
     weapon = dice:new('1d6')                      -- '1d6'
 
 dice.__add [modify bonus]
 
-    weapon = weapon + 2                           -- '1d6+2'
+    weapon = weapon + 4                           -- '1d6+4'
+    
+dice.__sub [modify bonus]
+
+    weapon = weapon - 2				  -- '1d6+2'
 
 dice.__mul [modify number of dice]
 
@@ -105,72 +118,68 @@ dice.__div [modify dice faces]
 dice.__pow [modify dice rerolls]
 
     weapon = weapon ^ 1                           -- '3d4+2^+1'
+    
+dice.__mod [modify dice sets]
+
+    weapon = weapon % 2				  -- '(3d4+1^+1)x3'
 
 dice.__concat [modify double sign (for bonus or rerolls)]
 
-    weapon = weapon .. '++^^'                     -- '3d4++2^++1'
-    weapon = weapon .. '+^'                       -- '3d4+2^+1'
+    weapon = weapon .. '++^^'                     -- '(3d4++2^++1)x3'
+    weapon = weapon .. '+^'                       -- '(3d4+2^+1)x3'
     -- '++' or '--' to enable double sign for bonus, '^^' to enable double sign for rerolls
     -- '+' or '-' to enable single sign for bonus, '^' to enable single sign for rerolls
 
 dice.__tostring [returns dice str]
 
-    print(weapon)                                 -- '3d4+2^+1'
+    print(weapon)                                 -- '(3d4+2^+1)x3'
+
+Minimums
+--------
+
+You can set minimums for the dice result for either the entire class, a single dice instance, or nil. (nil allows negative roll results)
+
+To set the class minimum:
+
+    dice.setMin(0) 				   -- Dice minimum for ALL results is now 0
     
-	 
-Probability
------------
+To set a dice instance minimum: (the second argument in dice:new(dice_str, minimum))
 
-First load the module:
+    dice:new('1d5', 1)				   -- Dice minimum for ONLY this dice instance is 1
 
-    local odds = require('rl-dice/odds')
+A dice instance minimum overrides a class minimum.  Therefore,
 
-Next then all you do is,
+    dice.setMin(0)     				    -- dice class min is 0
+    dice_INST = dice:new('1d3-10', 1)		    -- dice inst min is 1
+    print(dice_INST:roll()) 			    -- 1
 
-    list = odds('1d6')
-    list = odds(6)
-    list = odds(formated_dice_tbl)
-    
-All return the same table containing:
-    
-    list.low = (lowest possible roll)
-    list.high = (highest possible roll)
-    list.average = (average roll)
-    
-Starting at index [low] and ending at index [high] is chance to roll.
+    dice.setMin(nil)				    -- dice class min is nil (can roll negative results)
+    dice_INST = dice:new('1d3-5')		    -- dice inst min is nil as well 
+    print(dice_INST:roll())			    -- -3
 
-    for i=list.low, list.high do 
-      list[i] = (possible roll percent)
-    end  
+Dice Strings
+------------
 
-Note - probability is even factored for rerolls and bonus,
+The dice must follow a certain string format when creating a new dice object or it will raise an error.
 
-    list = odds('1d6^+1')
-    list = odds('1d6+3')
-
-
-It is recommended that you SAVE the probability table and avoid generating it repeatedly as it can consume a lot of CPU when there is many dice, faces, or rerolls.  (ie. something like 100d7^++2)
+    dice_str = '1d5'			     	-- valid
+    dice_str = '3d5'			     	-- valid
+    dice_str = '(1d3)x1'		     	-- valid
+    dice_str = '1d2+1'			     	-- valid
+    dice_str = '1d10^+1'			-- valid
+    dice_str = '1d5+1^-2'	        	-- valid
+    dice_str = '(1d3+8^+3)x3'		     	-- valid
+    dice_str = ' 1d5'			     	-- not valid (space in front of string)
+    dice_str = '+10d5'			     	-- not valid
+    dice_str = '5d+5'			     	-- not valid
+    dice_str = '3d4+^1'			     	-- not valid
+    dice_str = '(1d3)x1+5'		     	-- not valid (bonuses and rerolls have to be inside the sets parenthesis!)
+    dice_str = '3d4^3'			     	-- not valid (reroll needs a + or - sign in front of it)
 	 
 Remember!
 ---------
 
 * Error message will result if dice are incorrectly formatted.
 * You must put a pos or neg sign in front of the bonus or reroll! (if you are going to use them)
-* Double sign, bonus value, and rerolls are optional, but number of dice and dice faces are NOT!
-* When using dice.roll(), if dice faces or dice num is 0 or neg, it will default to 1.
-* It is POSSIBLE to roll negative numbers if a negative dice bonus is present.
-* Odds ignore any minimums (will be fixed later)
-
-Future Features
----------------
-
-DICE SET MULTIPLIER
-
-* New dice method to roll a set of dice multiple times
-* So for instance, a 2d4 dice and multiply the set by 3 would roll (2d4) three times and get the results 
-* Possibly use the % operator, or switch to * or ^ (and rearrange former operators)
-* This will result in the dice results being different.  Instead of 3d4 returning a table with {1d4_result, 1d4_result, 1d4_result, 1d4_result} it will return {3d4_result} instead.  
-* Other methods might be affected (rerolls and bonuses) but have yet to be determined
-* Update odds to include minimums
-* Rearrange the odds/dice folder so that when the file is required the correct path is chossen
-* Make it easier to edit the dice.minimum class default?  
+* Double sign, bonus value, sets, and rerolls are optional, but number of dice and dice faces are NOT!
+* When using dice.roll(), if dice result is 0 or neg, it will default to 1. (unless dice.minimum is set to another value)
