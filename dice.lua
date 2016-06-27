@@ -1,14 +1,17 @@
-local dice = {}
+dice = {}
 dice.__index = dice
-dice.minimum = 1 -- lowest possible roll is 1 (class default)
+dice.minimum = 1 -- class default lowest possible roll is 1  (can set to nil to allow negative rolls)
+
+local random, max, abs, sort = math.random, math.max, math.abs, table.sort
 
 --[[-- DICE INDEX -----
-{x}d{y}+{s}{z}^+{s}{r}
+{x}d{y}+{s}{z}^+{s}{r}x{v}
     x - number of dice being rolled
     y - faces of the dice
     z - a value to be added to the result (can be negative)
     r - rerolls, if + then remove lowest rolls, if - then remove highest rolls
     s - if double sign (++ or --) adds {z} value to all dice rolls (default is last roll) or {r} rerolls to all dice rolls
+    v - sets of dice used
     
     Examples:
     
@@ -20,56 +23,57 @@ dice.minimum = 1 -- lowest possible roll is 1 (class default)
      2d6^+2 = Roll 4 dice with six sides, remove the two lowest rolls
     2d4^++1 = Roll 4 dice with four sides, remove the two lowest rolls
    3d4-2^-1 = Roll 3 dice with four sides, remove the highest roll, add -1 to last roll
------- FINISH --]]--
+------ FINISH --]]--    
 
-local function shuffle(tab)
-	local len = #tab
-	local r
-	for i = 1, len do
-		r = math.random(i, len)
-		tab[i], tab[r] = tab[r], tab[i]
-	end
-end
-
-local function determine(num_dice, dice_faces, bonus, double_sign_bonus, rerolls, double_sign_rerolls, minimum)     
-	local rolls = {}
-	local rerolls_temp = rerolls or 0
-	local bonus_all = double_sign_bonus and bonus or 0
-	local rerolls = double_sign_rerolls and rerolls_temp*num_dice or rerolls_temp
+local function determine(num_dice, dice_faces, bonus, double_sign_bonus, rerolls, double_sign_rerolls, sets, minimum)
+  sets = max(sets, 1)  -- Minimum of 1 needed 
+  local set_rolls = {}
   
-	-- num_dice & dice_faces CANNOT be negative!
-	local num_dice, dice_faces = math.max(num_dice, 1), math.max(dice_faces, 1)
+  local bonus_all = double_sign_bonus and bonus or 0
+  rerolls = rerolls or 0
+  rerolls = double_sign_rerolls and rerolls*num_dice or rerolls
 
-	for i=1, num_dice + math.abs(rerolls) do
-		rolls[i] = math.random(1, dice_faces) + bonus_all
-	end
+  -- num_dice & dice_faces CANNOT be negative!
+  num_dice, dice_faces = max(num_dice, 1), max(dice_faces, 1)
+  
+  for i=1, sets do
+    local rolls = {}
+    for ii=1, num_dice + abs(rerolls) do
+      rolls[ii] = random(1, dice_faces) + bonus_all
+    end
 
-	if rerolls ~= 0 then
-		-- sort and if reroll is + then remove lowest rolls, if reroll is - then remove highest rolls
-		if rerolls > 0 then table.sort(rolls, function(a,b) return a>b end) else table.sort(rolls) end
-		for i=num_dice + 1, #rolls do rolls[i] = nil end
-		shuffle(rolls) -- to make the rolls random and out of order
-	end
+    if rerolls ~= 0 then
+      -- sort and if reroll is + then remove lowest rolls, if reroll is - then remove highest rolls
+      if rerolls > 0 then sort(rolls, function(a,b) return a>b end) else sort(rolls) end
+      for index=num_dice + 1, #rolls do rolls[index] = nil end
+      --shuffle(rolls) -- to make the rolls random and out of order
+    end
 
-	-- adds bonus to last roll by default
-	if not double_sign_bonus and bonus then rolls[#rolls] = rolls[#rolls] + bonus end
+    -- adds bonus to last roll by default
+    if not double_sign_bonus and bonus then rolls[#rolls] = rolls[#rolls] + bonus end
+    
+    local total = 0
+    for _, number in ipairs(rolls) do total = total + number end
+    set_rolls[i] = total    
+  end
 
-	-- if minimum is empty then use dice class default min
-	if minimum == nil then minimum = dice.minimum end
-	
-	if minimum then
-		for i=1, num_dice do
-			rolls[i] = math.max(rolls[i], minimum)
-		end
-	end
-	
-	return unpack(rolls)
+  -- if minimum is empty then use dice class default min
+  if minimum == nil then minimum = dice.minimum end
+
+  if minimum then
+    for i=1, sets do
+      set_rolls[i] = max(set_rolls[i], minimum)
+    end
+  end  
+  
+  return unpack(set_rolls)
 end
 
 --[[
   dice = {
       num = (+)number, 
       faces = (+)number, 
+      sets = (+)number,          -- optional
       bonus = (+ or -)number,    -- optional
       double_b = binary,         -- optional (requires bonus)
       rerolls = (+ or -)number   -- optional
@@ -79,18 +83,17 @@ end
 --]]
 
 function dice:new(roll, minimum)
-	local roll = (type(roll) == 'table' and roll) or (type(roll) == 'string' and dice.getDice(roll)) or (type(roll) == 'number' and dice.getDice('1d'..roll))
+	roll = (type(roll) == 'table' and roll) or (type(roll) == 'string' and dice.getDice(roll)) or (type(roll) == 'number' and dice.getDice('1d'..roll))
 	roll.minimum = minimum	
 	self.__index = self
 	return setmetatable(roll, self)
 end
 
-function dice:setMin(minimum) self.minimum = minimum end
-
 function dice:getNum() return self.num end
 function dice:getFaces() return self.faces end
 function dice:getBonus() return self.bonus end
 function dice:getRerolls() return self.rerolls end
+function dice:getSets() return self.sets end
 function dice:getTotalBonus() return (self.double_b and self.bonus*self.num) or self.bonus end
 function dice:getTotalRerolls() return (self.double_r and self.rerolls*self.num) or self.rerolls end
 function dice:isDoubleReroll() return self.double_r end
@@ -98,13 +101,17 @@ function dice:isDoubleBonus() return self.double_b end
 
 function dice.__add(roll, value) roll.bonus = roll:getBonus() + value return dice:new(roll) end
 
+function dice.__sub(roll, value) roll.bonus = roll:getBonus() - value return dice:new(roll) end
+
 function dice.__mul(roll, value) roll.num = roll:getNum() + value return dice:new(roll) end
 
 function dice.__div(roll, value) roll.faces = roll:getFaces() + value return dice:new(roll) end
 
 function dice.__pow(roll, value) roll.rerolls = roll:getRerolls() + value return dice:new(roll) end
 
-function dice.__tostring(self) return self:getString() end  
+function dice.__mod(roll, value) roll.sets = roll:getSets() + value return dice:new(roll) end
+
+function dice.__tostring(self) return self:getString() end
 
 function dice.__concat(roll, str)
 	local str_b = str:match('[+-][+-]?') or ''  
@@ -124,53 +131,56 @@ end
 function dice:roll()
 	if type(self) == 'string' then
 		local roll = dice.getDice(self)
-		return {determine(roll.num, roll.faces, roll.bonus, roll.double_b, roll.rerolls, roll.double_r, roll.minimum)}
+		return determine(roll.num, roll.faces, roll.bonus, roll.double_b, roll.rerolls, roll.double_r, roll.sets, roll.minimum)
 	elseif type(self) == 'number' then
-		return {math.random(1, self)}
+		return max(random(1, self), dice.minimum)
 	elseif type(self) == 'table' then
-		return {determine(self.num, self.faces, self.bonus, self.double_b, self.rerolls, self.double_r, self.minimum)}      
+		return determine(self.num, self.faces, self.bonus, self.double_b, self.rerolls, self.double_r, self.sets, self.minimum)      
 	end
 end
 
 -- percent must be a decimal (ie. .75 = 75%)
-function dice.chance(percent) return percent >= math.random() end
+function dice.chance(percent) return percent >= random() end
 
 function dice.getDice(str)
-	if not str:match('%d+[d]%d+') then return error("Dice string incorrectly formatted.") end
+  local dice_pattern = '[(]?%d+[d]%d+[+-]?[+-]?%d*[%^]?[+-]?[+-]?%d*[)]?[x]?%d*'
+	if str ~= str:match(dice_pattern) then return error("Dice string incorrectly formatted.") end
 	local dice = {}
-	dice.num = tonumber(str:match('%d+')) or 0
-	if not (dice.num > 0) then return error('No dice to roll?') end -- if no dice then exit
+  
+	dice.num = tonumber(str:match('%d+'))
+	dice.faces = tonumber(str:match('[d](%d+)'))
 
-	local str_f = str:match('[d]%d+')
-	dice.faces = tonumber(str_f:sub(2)) or 0
+	local double_bonus, bonus = str:match('[^%^+-]([+-][+-]?)(%d+)')
+	dice.double_b = double_bonus == '++' or double_bonus == '--' 
+	dice.bonus = tonumber(bonus) or 0
 
-	local str_b = str:match('[^%^+-][+-][+-]?%d+') or ''
-	dice.double_b = str_b:sub(2,3) == '++' or str_b:sub(2,3) == '--' or false -- if ++ or --, then bonus to all dice
-	dice.bonus = tonumber(str_b:match('[+-]%d+')) or 0
-
-	local str_r = str:match('[%^][+-][+-]?%d+') or ''
-	dice.double_r = str_r:sub(2,3) == '++' or str_r:sub(2,3) == '--' or false -- if ++ or --, then reroll all dice
-
-	dice.rerolls = tonumber(str_r:match('[+-]%d+')) or 0	
+	local double_reroll, reroll = str:match('[%^]([+-][+-]?)(%d+)')
+	dice.double_r = double_reroll == '++' or double_reroll == '--' 
+	dice.rerolls = tonumber(reroll) or 0	
+  
+  dice.sets = tonumber(str:match('[x](%d+)')) or 1
 	return dice
 end
 
 function dice:getString()
-	local num_dice, dice_faces, bonus, double_sign_bonus, rerolls, double_sign_reroll = self.num, self.faces, self.bonus, self.double_b, self.rerolls, self.double_r
+	local num_dice, dice_faces, bonus, double_sign_bonus, rerolls, double_sign_reroll, sets = self.num, self.faces, self.bonus, self.double_b, self.rerolls, self.double_r, self.sets
   
-	-- num_dice & dice_faces CANNOT be negative!  
-	local num_dice, dice_faces = math.max(num_dice, 1), math.max(dice_faces, 1)
-  
-	if not num_dice or not dice_faces then return error('Dice string incorrectly formatted.  Missing num_dice or dice_faces.') 
-	elseif double_sign_bonus and not bonus then return error('Dice string incorrectly formatted. Double_sign exists but missing bonus.') end   
+	-- num_dice & dice_faces default to 1 if negative or 0!  
+	num_dice, dice_faces = max(num_dice, 1), max(dice_faces, 1)
   
 	local double_b = double_sign_bonus and (bonus >= 0 and '+' or '-') or ''
 	bonus = (bonus ~= 0 and double_b..string.format('%+d', bonus)) or ''  
     
 	local double_r = double_sign_reroll and (rerolls >= 0 and '+' or '-') or ''    
-	rerolls = (rerolls ~= 0 and '^'..double_r..string.format('%+d', rerolls)) or ''    
-
-	return num_dice..'d'..dice_faces..bonus..rerolls
+	rerolls = (rerolls ~= 0 and '^'..double_r..string.format('%+d', rerolls)) or ''  
+  
+  if sets > 1 then 
+    return '('..num_dice..'d'..dice_faces..bonus..rerolls..')x'..sets 
+  else 
+    return num_dice..'d'..dice_faces..bonus..rerolls
+  end
 end
+
+function dice.setMin(value) dice.minimum = value end
 
 return dice
