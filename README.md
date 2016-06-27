@@ -84,12 +84,12 @@ Dice Table
     dice = {
     	num = (+)number, 
     	faces = (+)number, 
-    	sets = (+)number,	   -- optional
+    	sets = (+)number,	       -- optional
     	bonus = (+ or -)number,    -- optional
     	double_b = binary,         -- optional (requires bonus)
     	rerolls = (+ or -)number   -- optional
     	double_r = binary,         -- optional (requires rerolls) 
-    	minimum = number/nil -- optional (nil results in class default (if any) )
+    	minimum = number/nil 	   -- optional (nil results in class default (if any) )
     }
 
 Classes & Metamethods
@@ -105,7 +105,7 @@ dice.__add [modify bonus]
     
 dice.__sub [modify bonus]
 
-    weapon = weapon - 2				  -- '1d6+2'
+    weapon = weapon - 2                           -- '1d6+2'
 
 dice.__mul [modify number of dice]
 
@@ -121,7 +121,7 @@ dice.__pow [modify dice rerolls]
     
 dice.__mod [modify dice sets]
 
-    weapon = weapon % 2				  -- '(3d4+1^+1)x3'
+    weapon = weapon % 2	                          -- '(3d4+1^+1)x3'
 
 dice.__concat [modify double sign (for bonus or rerolls)]
 
@@ -149,13 +149,13 @@ To set a dice instance minimum: (the second argument in dice:new(dice_str, minim
 
 A dice instance minimum overrides a class minimum.  Therefore,
 
-    dice.setMin(0)     				    -- dice class min is 0
-    dice_INST = dice:new('1d3-10', 1)		    -- dice inst min is 1
-    print(dice_INST:roll()) 			    -- 1
+    dice.setMin(0)                                  -- dice class min is 0
+    dice_INST = dice:new('1d3-10', 1)               -- dice inst min is 1
+    print(dice_INST:roll())                         -- 1
 
-    dice.setMin(nil)				    -- dice class min is nil (can roll negative results)
-    dice_INST = dice:new('1d3-5')		    -- dice inst min is nil as well 
-    print(dice_INST:roll())			    -- -3
+    dice.setMin(nil)                                -- dice class min is nil (can roll negative results)
+    dice_INST = dice:new('1d3-5')                   -- dice inst min is nil as well 
+    print(dice_INST:roll())                         -- -3
 
 Dice Strings
 ------------
@@ -166,9 +166,9 @@ The dice must follow a certain string format when creating a new dice object or 
     dice_str = '3d5'			     	-- valid
     dice_str = '(1d3)x1'		     	-- valid
     dice_str = '1d2+1'			     	-- valid
-    dice_str = '1d10^+1'			-- valid
+    dice_str = '1d10^+1'		  	    -- valid
     dice_str = '1d5+1^-2'	        	-- valid
-    dice_str = '(1d3+8^+3)x3'		     	-- valid
+    dice_str = '(1d3+8^+3)x3'		    -- valid
     dice_str = ' 1d5'			     	-- not valid (space in front of string)
     dice_str = '+10d5'			     	-- not valid
     dice_str = '5d+5'			     	-- not valid
