@@ -2,7 +2,7 @@ dice = {}
 dice.__index = dice
 dice.minimum = 1 -- class default lowest possible roll is 1  (can set to nil to allow negative rolls)
 
-local random, max, abs, sort = math.random, math.max, math.abs, table.sort
+local random, max, abs, sort, match, format = math.random, math.max, math.abs, table.sort, string.match, string.format
 
 --[[-- DICE INDEX -----
 {x}d{y}+{s}{z}^+{s}{r}x{v}
@@ -46,7 +46,6 @@ local function determine(num_dice, dice_faces, bonus, double_sign_bonus, rerolls
       -- sort and if reroll is + then remove lowest rolls, if reroll is - then remove highest rolls
       if rerolls > 0 then sort(rolls, function(a,b) return a>b end) else sort(rolls) end
       for index=num_dice + 1, #rolls do rolls[index] = nil end
-      --shuffle(rolls) -- to make the rolls random and out of order
     end
 
     -- adds bonus to last roll by default
@@ -114,10 +113,10 @@ function dice.__mod(roll, value) roll.sets = roll:getSets() + value return dice:
 function dice.__tostring(self) return self:getString() end
 
 function dice.__concat(roll, str)
-	local str_b = str:match('[+-][+-]?') or ''  
+	local str_b = match(str, '[+-][+-]?') or ''  
 	local bonus = ((str_b == '++' or str_b == '--') and 'double') or ((str_b == '+' or str_b == '-') and 'single') or nil
 
-	local str_r = str:match('[%^][%^]?') or ''
+	local str_r = match(str, '[%^][%^]?') or ''
 	local reroll = (str_r == '^^' and 'double') or (str_r == '^' and 'single') or nil
   
 	if bonus == 'double' then roll.double_b = true
@@ -144,21 +143,21 @@ function dice.chance(percent) return percent >= random() end
 
 function dice.getDice(str)
   local dice_pattern = '[(]?%d+[d]%d+[+-]?[+-]?%d*[%^]?[+-]?[+-]?%d*[)]?[x]?%d*'
-	if str ~= str:match(dice_pattern) then return error("Dice string incorrectly formatted.") end
+	if str ~= match(str, dice_pattern) then return error("Dice string incorrectly formatted.") end
 	local dice = {}
   
-	dice.num = tonumber(str:match('%d+'))
-	dice.faces = tonumber(str:match('[d](%d+)'))
+	dice.num = tonumber(match(str, '%d+'))
+	dice.faces = tonumber(match(str, '[d](%d+)'))
 
-	local double_bonus, bonus = str:match('[^%^+-]([+-][+-]?)(%d+)')
+	local double_bonus, bonus = match(str, '[^%^+-]([+-][+-]?)(%d+)')
 	dice.double_b = double_bonus == '++' or double_bonus == '--' 
 	dice.bonus = tonumber(bonus) or 0
 
-	local double_reroll, reroll = str:match('[%^]([+-][+-]?)(%d+)')
+	local double_reroll, reroll = match(str, '[%^]([+-][+-]?)(%d+)')
 	dice.double_r = double_reroll == '++' or double_reroll == '--' 
 	dice.rerolls = tonumber(reroll) or 0	
   
-  dice.sets = tonumber(str:match('[x](%d+)')) or 1
+  dice.sets = tonumber(match(str, '[x](%d+)')) or 1
 	return dice
 end
 
@@ -169,10 +168,10 @@ function dice:getString()
 	num_dice, dice_faces = max(num_dice, 1), max(dice_faces, 1)
   
 	local double_b = double_sign_bonus and (bonus >= 0 and '+' or '-') or ''
-	bonus = (bonus ~= 0 and double_b..string.format('%+d', bonus)) or ''  
+	bonus = (bonus ~= 0 and double_b..format('%+d', bonus)) or ''  
     
 	local double_r = double_sign_reroll and (rerolls >= 0 and '+' or '-') or ''    
-	rerolls = (rerolls ~= 0 and '^'..double_r..string.format('%+d', rerolls)) or ''  
+	rerolls = (rerolls ~= 0 and '^'..double_r..format('%+d', rerolls)) or ''  
   
   if sets > 1 then 
     return '('..num_dice..'d'..dice_faces..bonus..rerolls..')x'..sets 
