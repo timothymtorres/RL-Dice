@@ -1,0 +1,634 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>RL-Dice Documentation</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>RL Dice</h1>
+
+
+
+
+<h2>Methods</h2>
+<ul class="nowrap">
+    <li><a href="#dice:new">dice:new (dice_notation[, minimum])</a></li>
+    <li><a href="#dice:setMin">dice:setMin ([value])</a></li>
+    <li><a href="#dice:getNum">dice:getNum ()</a></li>
+    <li><a href="#dice:getFaces">dice:getFaces ()</a></li>
+    <li><a href="#dice:getBonus">dice:getBonus ()</a></li>
+    <li><a href="#dice:getRerolls">dice:getRerolls ()</a></li>
+    <li><a href="#dice:getSets">dice:getSets ()</a></li>
+    <li><a href="#dice:getTotalBonus">dice:getTotalBonus ()</a></li>
+    <li><a href="#dice:getTotalRerolls">dice:getTotalRerolls ()</a></li>
+    <li><a href="#dice:isDoubleReroll">dice:isDoubleReroll ()</a></li>
+    <li><a href="#dice:isDoubleBonus">dice:isDoubleBonus ()</a></li>
+    <li><a href="#dice:roll">dice:roll (self[, minimum])</a></li>
+</ul>
+<h2>Metamethods</h2>
+<ul class="nowrap">
+    <li><a href="#dice:__add">dice:__add (value)</a></li>
+    <li><a href="#dice:__sub">dice:__sub (value)</a></li>
+    <li><a href="#dice:__mul">dice:__mul (value)</a></li>
+    <li><a href="#dice:__div">dice:__div (value)</a></li>
+    <li><a href="#dice:__pow">dice:__pow (value)</a></li>
+    <li><a href="#dice:__mod">dice:__mod (value)</a></li>
+    <li><a href="#dice:__tostring">dice:__tostring ()</a></li>
+    <li><a href="#dice:__concat">dice:__concat (pluralism_notation)</a></li>
+</ul>
+<h2>Classes</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><strong>dice</strong></li>
+</ul>
+<h2>Topics</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../topics/faq.md.html">faq</a></li>
+  <li><a href="../topics/instance.md.html">instance</a></li>
+  <li><a href="../topics/notation.md.html">notation</a></li>
+</ul>
+<h2>Examples</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../examples/advanced_uses.lua.html">advanced_uses.lua</a></li>
+  <li><a href="../examples/basic_dice.lua.html">basic_dice.lua</a></li>
+  <li><a href="../examples/boundry_behaviour.lua.html">boundry_behaviour.lua</a></li>
+  <li><a href="../examples/metamethods.lua.html">metamethods.lua</a></li>
+  <li><a href="../examples/minimum.lua.html">minimum.lua</a></li>
+  <li><a href="../examples/valid_dice_notation.lua.html">valid_dice_notation.lua</a></li>
+  <li><a href="../examples/weapon_samples.lua.html">weapon_samples.lua</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Class <code>dice</code></h1>
+<p>A library used to roll and manipulate roguelike based dice</p>
+<p>
+
+</p>
+    <h3>Info:</h3>
+    <ul>
+        <li><strong>Copyright</strong>: 2013</li>
+        <li><strong>License</strong>: MIT/X11</li>
+        <li><strong>Author</strong>: Timothy Torres</li>
+    </ul>
+
+
+
+    <h2><a name="Methods"></a>Methods</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "dice:new"></a>
+    <strong>dice:new (dice_notation[, minimum])</strong>
+    </dt>
+    <dd>
+    Creates a new dice instance
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">dice_notation</span>
+            <span class="types"><span class="type">int</span> or <a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         Can be either a dice string, or int
+        </li>
+        <li><span class="parameter">minimum</span>
+            <span class="types"><span class="type">int</span></span>
+         Sets dice instance roll's minimum result boundaries
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="../index.html#">dice</a></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "dice:setMin"></a>
+    <strong>dice:setMin ([value])</strong>
+    </dt>
+    <dd>
+    Sets class global for dice minimum
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">value</span>
+            <span class="types"><span class="type">int</span></span>
+         Sets dice class minimum result boundaries (if nil, no minimum result)
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "dice:getNum"></a>
+    <strong>dice:getNum ()</strong>
+    </dt>
+    <dd>
+    Number of total dice
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">int</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "dice:getFaces"></a>
+    <strong>dice:getFaces ()</strong>
+    </dt>
+    <dd>
+    Number of total faces on a dice
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">int</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "dice:getBonus"></a>
+    <strong>dice:getBonus ()</strong>
+    </dt>
+    <dd>
+    Bonus to be added to the dice total
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">int</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "dice:getRerolls"></a>
+    <strong>dice:getRerolls ()</strong>
+    </dt>
+    <dd>
+    Rerolls to be added to the dice
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">int</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "dice:getSets"></a>
+    <strong>dice:getSets ()</strong>
+    </dt>
+    <dd>
+    Number of total dice sets
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">int</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "dice:getTotalBonus"></a>
+    <strong>dice:getTotalBonus ()</strong>
+    </dt>
+    <dd>
+    Bonus to be added to all dice (if double bonus enabled) otherwise regular bonus
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">int</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "dice:getTotalRerolls"></a>
+    <strong>dice:getTotalRerolls ()</strong>
+    </dt>
+    <dd>
+    Rerolls to be added to all dice (if double reroll enabled) otherwise regular reroll
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">int</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "dice:isDoubleReroll"></a>
+    <strong>dice:isDoubleReroll ()</strong>
+    </dt>
+    <dd>
+    Determines if all dice are to be rerolled together or individually
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">bool</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "dice:isDoubleBonus"></a>
+    <strong>dice:isDoubleBonus ()</strong>
+    </dt>
+    <dd>
+    Determines if all dice are to apply a bonus together or individually
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">bool</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "dice:roll"></a>
+    <strong>dice:roll (self[, minimum])</strong>
+    </dt>
+    <dd>
+    Rolls the dice
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">self</span>
+            <span class="types"><span class="type">int</span>, <a class="type" href="../index.html#">dice</a> or <span class="type">str</span></span>
+
+
+
+        </li>
+        <li><span class="parameter">minimum</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Metamethods"></a>Metamethods</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "dice:__add"></a>
+    <strong>dice:__add (value)</strong>
+    </dt>
+    <dd>
+    Modifies bonus
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">value</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="../index.html#">dice</a></span>
+        dice
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "dice:__sub"></a>
+    <strong>dice:__sub (value)</strong>
+    </dt>
+    <dd>
+    Modifies bonus
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">value</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="../index.html#">dice</a></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "dice:__mul"></a>
+    <strong>dice:__mul (value)</strong>
+    </dt>
+    <dd>
+    Modifies number of dice
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">value</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="../index.html#">dice</a></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "dice:__div"></a>
+    <strong>dice:__div (value)</strong>
+    </dt>
+    <dd>
+    Modifies amount of dice faces
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">value</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="../index.html#">dice</a></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "dice:__pow"></a>
+    <strong>dice:__pow (value)</strong>
+    </dt>
+    <dd>
+    Modifies rerolls
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">value</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="../index.html#">dice</a></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "dice:__mod"></a>
+    <strong>dice:__mod (value)</strong>
+    </dt>
+    <dd>
+    Modifies dice sets
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">value</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="../index.html#">dice</a></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "dice:__tostring"></a>
+    <strong>dice:__tostring ()</strong>
+    </dt>
+    <dd>
+    Gets a formatted dice string in roguelike notation
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "dice:__concat"></a>
+    <strong>dice:__concat (pluralism_notation)</strong>
+    </dt>
+    <dd>
+    Modifies whether reroll or bonus applies to individual dice or all of them
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pluralism_notation</span>
+            <span class="types"><span class="type">str</span></span>
+         String must be one of the following operators <code>- + ^</code> The operator may be double signed to indicate pluralism.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="../index.html#">dice</a></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.3</a></i>
+<i style="float:right;">Last updated 2016-10-27 22:42:07 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

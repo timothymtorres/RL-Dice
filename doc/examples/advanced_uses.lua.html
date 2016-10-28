@@ -1,0 +1,126 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>RL-Dice Documentation</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>RL Dice</h1>
+
+
+
+
+<h2>Examples</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><strong>advanced_uses.lua</strong></li>
+  <li><a href="../examples/basic_dice.lua.html">basic_dice.lua</a></li>
+  <li><a href="../examples/boundry_behaviour.lua.html">boundry_behaviour.lua</a></li>
+  <li><a href="../examples/metamethods.lua.html">metamethods.lua</a></li>
+  <li><a href="../examples/minimum.lua.html">minimum.lua</a></li>
+  <li><a href="../examples/valid_dice_notation.lua.html">valid_dice_notation.lua</a></li>
+  <li><a href="../examples/weapon_samples.lua.html">weapon_samples.lua</a></li>
+</ul>
+<h2>Classes</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../index.html">dice</a></li>
+</ul>
+<h2>Topics</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../topics/faq.md.html">faq</a></li>
+  <li><a href="../topics/instance.md.html">instance</a></li>
+  <li><a href="../topics/notation.md.html">notation</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+    <h2>advanced_uses.lua</h2>
+<pre>
+dice = <span class="global">require</span>(<span class="string">'dice'</span>)
+<span class="global">math</span>.randomseed(<span class="global">os</span>.time())
+
+<span class="comment">-- Some special ways the user may choose to utilize the dice module
+</span><span class="comment">-- although there are endless creative possiblities
+</span>
+<span class="comment">-- DUAL WIELDING --
+</span>	l_hand_weap, r_hand_weap = dice:new(<span class="string">'1d6'</span>), dice:new(<span class="string">'2d4'</span>)
+	attacks = {l_hand_weap:roll(), r_hand_weap:roll()}
+
+	<span class="keyword">for</span> _, attack <span class="keyword">in</span> <span class="global">ipairs</span>(attacks) <span class="keyword">do</span>
+	  <span class="comment">-- apply armor protection
+</span>	  <span class="comment">-- take damage
+</span>	  <span class="comment">-- ...
+</span>	<span class="keyword">end</span>
+
+<span class="comment">-- STATUS EFFECTS --
+</span>	sleep_duration = dice.roll(<span class="string">'1d100+50'</span>)
+	confusion_duration = dice.roll(<span class="string">'1d10'</span>)
+	poison_damage = dice.roll(<span class="string">'1d3'</span>)
+
+<span class="comment">-- CURSED/BLESSED ITEMS --
+</span>	basic_weapon = dice:new(<span class="string">'1d4'</span>)
+
+	<span class="keyword">if</span> basic_weapon:isCursed() <span class="keyword">then</span>       <span class="comment">-- Add a reroll that removes the highest number
+</span>		basic_weapon = basic_weapon ^ -<span class="number">1</span>
+	<span class="keyword">elseif</span> basic_weapon:isBlessed() <span class="keyword">then</span>  <span class="comment">-- Add a reroll that removes the lowest number
+</span>		basic_weapon = basic_weapon ^ <span class="number">1</span>
+	<span class="keyword">end</span>
+
+<span class="comment">-- SKILL MASTERY --
+</span>	<span class="keyword">if</span> player:hasMasteredSkill() <span class="keyword">then</span>
+		<span class="comment">-- apply a positive reroll when doing something
+</span>	<span class="keyword">end</span>
+
+<span class="comment">-- AIMING AND TO-HIT --
+</span>	weapon_to_hit = dice:new(<span class="string">'1d20'</span>)
+
+	<span class="keyword">if</span> weapon_to_hit:roll() &gt; enemy_def <span class="keyword">then</span>
+		<span class="comment">-- attack is successful
+</span>		<span class="comment">-- apply damage
+</span>	<span class="keyword">end</span>
+
+<span class="comment">-- BURSTFIRE --
+</span>	gattling_gun = dice:new(<span class="string">'(1d5)x6'</span>)
+
+	<span class="keyword">for</span> _, damage <span class="keyword">in</span> <span class="global">ipairs</span>( {gattling_gun:roll()} ) <span class="keyword">do</span>
+		<span class="keyword">if</span> to_hit:roll() &gt; enemy_dodge <span class="keyword">then</span>
+			<span class="comment">-- attack succeeds
+</span>			<span class="comment">-- apply protections
+</span>			<span class="comment">-- apply damage
+</span>		<span class="keyword">else</span>
+			<span class="comment">-- missed
+</span>			<span class="comment">-- skip damage calculations
+</span>			<span class="comment">-- include miss message
+</span>		<span class="keyword">end</span>
+	<span class="keyword">end</span></pre>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.3</a></i>
+<i style="float:right;">Last updated 2016-10-27 22:42:07 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

@@ -1,0 +1,214 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>RL-Dice Documentation</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>RL Dice</h1>
+
+
+
+
+<h2>Examples</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../examples/advanced_uses.lua.html">advanced_uses.lua</a></li>
+  <li><a href="../examples/basic_dice.lua.html">basic_dice.lua</a></li>
+  <li><a href="../examples/boundry_behaviour.lua.html">boundry_behaviour.lua</a></li>
+  <li><a href="../examples/metamethods.lua.html">metamethods.lua</a></li>
+  <li><a href="../examples/minimum.lua.html">minimum.lua</a></li>
+  <li><a href="../examples/valid_dice_notation.lua.html">valid_dice_notation.lua</a></li>
+  <li><strong>weapon_samples.lua</strong></li>
+</ul>
+<h2>Classes</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../index.html">dice</a></li>
+</ul>
+<h2>Topics</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../topics/faq.md.html">faq</a></li>
+  <li><a href="../topics/instance.md.html">instance</a></li>
+  <li><a href="../topics/notation.md.html">notation</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+    <h2>weapon_samples.lua</h2>
+<pre>
+<span class="comment">-- Here is a list of weapons that I have made for some of my games and how they have been
+</span><span class="comment">-- used with the dice module
+</span>
+
+<span class="comment">-- *Note that every weapon that is initalized has a condition variable between:
+</span><span class="comment">-- weapon.condition = {0=ruined, 1=worn, 2=average, 3=pristine}
+</span><span class="comment">-- This will effect the dice string or accuracy in a positive or negative way for each weapon group differently
+</span>
+weapon = {}
+<span class="comment">-- weapon.dice =        Damage upon a successful attack
+</span><span class="comment">-- weapon.accuracy =    To-hit chance
+</span><span class="comment">-- weapon.durability =  Chance for condition to degrade after use (higher number results in longer use)
+</span>
+<span class="comment">--[[
+--- BRUTE ---
+-----  This weapon group uses large dice face numbers that excel against armored opponets
+-----  High amount of durability since attacking with dull melee weapons
+-----  Low accuracy since swinging bulky melee weapons is diffcult
+
+-----  Condition Modifiers -----
+-----  dice = dice / -4  (ruined)
+-----  dice = dice / -2  (worn)
+-----  dice = dice       (average)
+-----  dice = dice /  2  (pristine)
+--]]</span>
+
+weapon.bat = {}
+weapon.bat.full_name = <span class="string">'baseball bat'</span>
+weapon.bat.dice = <span class="string">'1d4'</span>
+weapon.bat.accuracy = <span class="number">4</span>
+weapon.bat.durability = <span class="number">12</span>
+
+weapon.crowbar = {}
+weapon.crowbar.full_name = <span class="string">'crowbar'</span>
+weapon.crowbar.dice = <span class="string">'1d5'</span>
+weapon.crowbar.accuracy = <span class="number">4</span>
+weapon.crowbar.durability = <span class="number">10</span>
+
+weapon.sledge = {}
+weapon.sledge.full_name = <span class="string">'sledgehammer'</span>
+weapon.sledge.dice = <span class="string">'1d8'</span>
+weapon.sledge.accuracy = <span class="number">3</span>
+weapon.sledge.durability = <span class="number">10</span>
+
+<span class="comment">--[[
+--- BLADE ---
+-----  This weapon group uses dice bonuses that makes for high average damage output
+-----  Low durability since bladed weapons dull quickly
+-----  Medium accuracy since bladed weapons are light
+
+-----  Condition Modifiers -----
+-----  dice = dice - 2  (ruined)
+-----  dice = dice - 1  (worn)
+-----  dice = dice      (average)
+-----  dice = dice + 1  (pristine)
+--]]</span>
+
+weapon.knife = {}
+weapon.knife.full_name = <span class="string">'knife'</span>
+weapon.knife.dice = <span class="string">'1d2+1'</span>
+weapon.knife.accuracy = <span class="number">4</span>
+weapon.knife.durability = <span class="number">3</span>
+
+weapon.katanna = {}
+weapon.katanna.full_name = <span class="string">'katanna'</span>
+weapon.katanna.dice = <span class="string">'1d4+2'</span>
+weapon.katanna.accuracy = <span class="number">5</span>
+weapon.katanna.durability = <span class="number">4</span>
+
+<span class="comment">--[[
+--- PROJECTILE ---
+-----  This weapon group uses high damage, but at the cost of ammo
+-----  Medium durability
+-----  High accuracy
+
+-----  Condition Modifiers -----
+-----  accuracy = accuracy - 2  (ruined)
+-----  accuracy = accuracy - 1  (worn)
+-----  accuracy = accuracy      (average)
+-----  accuracy = accuracy + 1  (pristine)
+
+-----  Notice this isn't affecting the damage, but merely the accuracy!
+-----  Also we can conclude that whenever a ranged weapon is fired, it uses
+-----  up durability regardless of hit or miss, whereas a melee weapon does
+-----  not use durability on a miss
+--]]</span>
+
+weapon.pistol = {}
+weapon.pistol.full_name = <span class="string">'pistol'</span>
+weapon.pistol.dice = <span class="string">'1d6+2'</span>
+weapon.pistol.accuracy = <span class="number">6</span>
+weapon.pistol.durability = <span class="number">7</span>
+
+weapon.magnum = {}
+weapon.magnum.full_name = <span class="string">'magnum'</span>
+weapon.magnum.dice = <span class="string">'1d9+4'</span>
+weapon.magnum.accuracy = <span class="number">6</span>
+weapon.magnum.durability = <span class="number">8</span>
+
+weapon.shotgun = {}
+weapon.shotgun.full_name = <span class="string">'shotgun'</span>
+weapon.shotgun.dice = <span class="string">'3d3++1'</span>
+weapon.shotgun.accuracy = <span class="number">6</span>
+weapon.shotgun.durability = <span class="number">8</span>
+
+weapon.rifle = {}
+weapon.rifle.full_name = <span class="string">'assualt rifle'</span>
+weapon.rifle.dice = <span class="string">'(3d2)x3'</span>
+weapon.rifle.accuracy = <span class="number">7</span>
+weapon.rifle.durability = <span class="number">8</span>
+
+
+<span class="comment">--[[
+--- BURN/EXPLOSIVES ---
+-----  This weapon group uses large number of dice
+-----  These weapons are single use
+-----  Low accuracy
+-----  Unpredictable damage, usually high
+
+-----  Condition Modifiers -----
+-----  dice = dice * -2  (ruined)
+-----  dice = dice * -1  (worn)
+-----  dice = dice       (average)
+-----  dice = dice *  1  (pristine)
+--]]</span>
+
+weapon.molotov = {}
+weapon.molotov.full_name = <span class="string">'molotov cocktail'</span>
+weapon.molotov.dice = <span class="string">'5d2'</span>
+weapon.molotov.accuracy = <span class="number">3</span>
+weapon.molotov.durability = <span class="string">'one_use'</span>
+
+weapon.flare = {}
+weapon.flare.full_name = <span class="string">'flare gun'</span>
+weapon.flare.dice = <span class="string">'5d3'</span>
+weapon.flare.accuracy = <span class="number">3</span>
+weapon.flare.durability = <span class="string">'one_use'</span>
+
+weapon.missile = {}
+weapon.missile.full_name = <span class="string">'missile launcher'</span>
+weapon.missile.dice = <span class="string">'5d8'</span>
+weapon.missile.accuracy = <span class="number">3</span>
+weapon.missile.durability = <span class="string">'one_use'</span>
+
+<span class="keyword">return</span> weapon</pre>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.3</a></i>
+<i style="float:right;">Last updated 2016-10-27 22:42:07 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

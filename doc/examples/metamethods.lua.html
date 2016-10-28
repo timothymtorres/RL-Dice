@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>RL-Dice Documentation</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>RL Dice</h1>
+
+
+
+
+<h2>Examples</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../examples/advanced_uses.lua.html">advanced_uses.lua</a></li>
+  <li><a href="../examples/basic_dice.lua.html">basic_dice.lua</a></li>
+  <li><a href="../examples/boundry_behaviour.lua.html">boundry_behaviour.lua</a></li>
+  <li><strong>metamethods.lua</strong></li>
+  <li><a href="../examples/minimum.lua.html">minimum.lua</a></li>
+  <li><a href="../examples/valid_dice_notation.lua.html">valid_dice_notation.lua</a></li>
+  <li><a href="../examples/weapon_samples.lua.html">weapon_samples.lua</a></li>
+</ul>
+<h2>Classes</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../index.html">dice</a></li>
+</ul>
+<h2>Topics</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../topics/faq.md.html">faq</a></li>
+  <li><a href="../topics/instance.md.html">instance</a></li>
+  <li><a href="../topics/notation.md.html">notation</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+    <h2>metamethods.lua</h2>
+<pre>
+dice = <span class="global">require</span>(<span class="string">'dice'</span>)
+<span class="global">math</span>.randomseed(<span class="global">os</span>.time())
+
+weapon = dice:new(<span class="string">'1d6'</span>)  <span class="comment">-- 1d6
+</span>
+<span class="comment">-- Subtraction or addition modifies the bonus of the rolls
+</span>weapon = weapon + <span class="number">4</span>       <span class="comment">-- 1d6+4
+</span>weapon = weapon - <span class="number">2</span>       <span class="comment">-- 1d6+2
+</span>
+<span class="comment">-- Multiplcation modifies the number of dice
+</span>weapon = weapon * <span class="number">2</span>       <span class="comment">-- 3d6+2
+</span>
+<span class="comment">-- Division modifies the number of faces on the dice
+</span>weapon = weapon / -<span class="number">2</span>      <span class="comment">-- 3d4+2
+</span>
+<span class="comment">-- Exponential modifies the rerolls (positive number removes low rolls, negative number removes high rolls)
+</span>weapon = weapon ^ <span class="number">1</span>       <span class="comment">-- 3d4+2^+1
+</span>
+<span class="comment">-- Modulo division modifies the dice sets (returns multiple results)
+</span>weapon = weapon % <span class="number">2</span>       <span class="comment">--(3d4+1^+1)x3
+</span>
+<span class="comment">-- To string operations returns a dice notation string
+</span><span class="global">print</span>(weapon)             <span class="comment">--(3d4+2^+1)x3
+</span>
+<span class="comment">-- Concat operations is a tricky concept to explain. Concating the dice with the following strings
+</span><span class="comment">-- '++', '--', '^^', '+', '-', '^' or a combination of both disables or enables plurality of bonus/rerolls
+</span><span class="comment">-- if a double operation sign is used, then the effect will be MULTIPLIED TO ALL dice
+</span><span class="comment">-- if a single operation sign is used, then the effect will apply as normal
+</span>
+<span class="comment">-- Let us create a new weapon to demonstrate this with bonuses
+</span>weapon = dice:new(<span class="string">'3d1+2'</span>)
+
+<span class="comment">-- Time to show how it is calculated
+</span><span class="global">print</span>(weapon:roll())       <span class="comment">-- 1 + 1 + (1+2)  RESULT=5
+</span>
+<span class="comment">-- Enable plurality for bonus
+</span>weapon = weapon .. <span class="string">'++'</span>    <span class="comment">-- 3d1++2
+</span>
+<span class="comment">-- Calculation is much different now!
+</span><span class="global">print</span>(weapon:roll())       <span class="comment">-- (1+2) + (1+2) + (1+2)  RESULT=9
+</span>
+<span class="comment">-- Reset back to normal
+</span>weapon = weapon .. <span class="string">'+'</span>     <span class="comment">--Plurality is now disabled for bonus
+</span>
+<span class="comment">-- Alternatively instead of '++' and '+' you may opt to use '--' and '-' instead.
+</span><span class="comment">-- Both signs enable/disable plurality for bonus
+</span>
+<span class="comment">-- Another new weapon to demonstrate plurality for rerolls
+</span>weapon = dice:new(<span class="string">'2d6^+1'</span>)
+
+<span class="comment">-- Rolls 2 dice and one extra
+</span><span class="global">print</span>(weapon:roll())        <span class="comment">-- (5) (3) (1) -- Out of the 3 dice, remove the lowest roll -&gt; (1)  RESULT=8
+</span>
+<span class="comment">-- Enable plurality for rerolls
+</span>weapon = weapon .. <span class="string">'^^'</span>
+
+<span class="comment">-- Now rolls 2 dice and two extra
+</span><span class="global">print</span>(weapon:roll())        <span class="comment">-- (2) (6) (4) (2) -- Out of the 4 dice, remove the two lowest rolls -&gt; (2) (2)  RESULT=10
+</span></pre>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.3</a></i>
+<i style="float:right;">Last updated 2016-10-27 22:42:07 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>
