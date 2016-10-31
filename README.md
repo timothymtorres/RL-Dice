@@ -1,7 +1,7 @@
 RL-Dice
 =======
 
-A robust module to roll and manipulate roguelike dice.  
+A robust module to roll and manipulate roguelike dice.  This has also been included in [rotLove](https://github.com/paulofmandown/rotLove) roguelike toolkit which I highly recommend if you plan on making a roguelike.
 
 Consult the [online documentation](https://timothymtorres.github.io/RL-Dice) for the API and usage examples.  
 
