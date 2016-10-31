@@ -48,11 +48,14 @@ function dice:new(dice_notation, minimum)
 	dice_INST.num = tonumber(match(dice_notation, '%d+'))
 	dice_INST.faces = tonumber(match(dice_notation, '[d](%d+)'))
 
-	local double_bonus, bonus = match(dice_notation, '[^%^+-]([+-][+-]?)(%d+)')
+	local double_bonus = match(dice_notation, '[^%^+-]([+-]?[+-])%d+')
+	local bonus = match(dice_notation, '[^%^+-][+-]?([+-]%d+)')
 	dice_INST.is_bonus_plural = double_bonus == '++' or double_bonus == '--' 
 	dice_INST.bonus = tonumber(bonus) or 0
 
-	local double_reroll, reroll = match(dice_notation, '[%^]([+-][+-]?)(%d+)')
+
+	local double_reroll = match(dice_notation, '[%^]([+-]?[+-])%d+')
+	local reroll = match(dice_notation, '[%^][+-]?([+-]%d+)')	
 	dice_INST.is_reroll_plural = double_reroll == '++' or double_reroll == '--' 
 	dice_INST.rerolls = tonumber(reroll) or 0	
 
