@@ -43,7 +43,7 @@ function dice:new(dice_notation, minimum)
   -- If dice_notation is a number, we must convert it into the proper dice string format
   if type(dice_notation) ==  'number' then dice_notation = '1d'..dice_notation end
   
-  local dice_pattern = '[(]?%d+[d]%d+[+-]?[+-]?%d*[%^]?[+-]?[+-]?%d*[)]?[x]?%d*'
+  local dice_pattern = '[(]?[-]?%d+[d][-]?%d+[+-]?[+-]?%d*[%^]?[+-]?[+-]?%d*[)]?[x]?[-]?%d*'
 	assert(dice_notation == match(dice_notation, dice_pattern), "Dice string incorrectly formatted.") 
   
   local merged_notation = dice_notation .. (minimum and '['..minimum..']' or '')
@@ -51,11 +51,11 @@ function dice:new(dice_notation, minimum)
   if not dice._cache[merged_notation] then
     local dice_INST = {}
 
-    dice_INST.num = tonumber(match(dice_notation, '%d+'))
-    dice_INST.faces = tonumber(match(dice_notation, '[d](%d+)'))
+    dice_INST.num = tonumber(match(dice_notation, '[-]?%d+'))
+    dice_INST.faces = tonumber(match(dice_notation, '[d]([-]?%d+)'))
 
-    local double_bonus = match(dice_notation, '[^%^+-]([+-]?[+-])%d+')
-    local bonus = match(dice_notation, '[^%^+-][+-]?([+-]%d+)')
+    local double_bonus = match(dice_notation, '[d][-]?%d+([+-]?[+-])%d+')
+    local bonus = match(dice_notation, '[d][-]?%d+[+-]?([+-]%d+)')
     dice_INST.is_bonus_plural = double_bonus == '++' or double_bonus == '--' 
     dice_INST.bonus = tonumber(bonus) or 0
 
@@ -64,7 +64,7 @@ function dice:new(dice_notation, minimum)
     dice_INST.is_reroll_plural = double_reroll == '++' or double_reroll == '--' 
     dice_INST.rerolls = tonumber(reroll) or 0	
 
-    dice_INST.sets = tonumber(match(dice_notation, '[x](%d+)')) or 1
+    dice_INST.sets = tonumber(match(dice_notation, '[x]([-]?%d+)')) or 1
     dice_INST.minimum = minimum	
     dice_INST.notation = dice_notation
     
@@ -136,8 +136,8 @@ local function modifyNotation(dice_INST, field, value)
 	local double_reroll = is_reroll_plural and (rerolls >= 0 and '+' or '-') or ''    
 	rerolls = (rerolls ~= 0 and '^'..double_reroll..format('%+d', rerolls)) or ''  
   
-  if sets > 1 then return '('..num_dice..'d'..dice_faces..bonus..rerolls..')x'..sets
-  else return num_dice..'d'..dice_faces..bonus..rerolls
+  if sets == 1 then return num_dice..'d'..dice_faces..bonus..rerolls
+  else return '('..num_dice..'d'..dice_faces..bonus..rerolls..')x'..sets
   end  
 end
 
