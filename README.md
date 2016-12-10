@@ -13,4 +13,5 @@ The dice module provides the following:
 * Dice rerolls - can reroll and filter out via highest or lowest results 
 * Dice sets - can return multiple results
 * Dice pluralism - enable bonus or rerolls to individual dice or to all dice 
+* Dice caching - reuses dice tables for faster performance
 

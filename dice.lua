@@ -27,9 +27,12 @@ local dice = {
     CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
     TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-  ]]
+  ]],
+  class_minimum = 1, -- class default lowest possible roll is 1  (can set to nil to allow negative rolls)
+  _cache = {},
 }
-dice.minimum = 1 -- class default lowest possible roll is 1  (can set to nil to allow negative rolls) 
+dice.__index = dice
+
 local random, max, abs, sort, match, format = math.random, math.max, math.abs, table.sort, string.match, string.format
 
 --- Creates a new dice instance
@@ -42,37 +45,44 @@ function dice:new(dice_notation, minimum)
   
   local dice_pattern = '[(]?%d+[d]%d+[+-]?[+-]?%d*[%^]?[+-]?[+-]?%d*[)]?[x]?%d*'
 	assert(dice_notation == match(dice_notation, dice_pattern), "Dice string incorrectly formatted.") 
+  
+  local merged_notation = dice_notation .. (minimum and '['..minimum..']' or '')
+  
+  if not dice._cache[merged_notation] then
+    local dice_INST = {}
 
-	local dice_INST = {}
+    dice_INST.num = tonumber(match(dice_notation, '%d+'))
+    dice_INST.faces = tonumber(match(dice_notation, '[d](%d+)'))
 
-	dice_INST.num = tonumber(match(dice_notation, '%d+'))
-	dice_INST.faces = tonumber(match(dice_notation, '[d](%d+)'))
+    local double_bonus = match(dice_notation, '[^%^+-]([+-]?[+-])%d+')
+    local bonus = match(dice_notation, '[^%^+-][+-]?([+-]%d+)')
+    dice_INST.is_bonus_plural = double_bonus == '++' or double_bonus == '--' 
+    dice_INST.bonus = tonumber(bonus) or 0
 
-	local double_bonus = match(dice_notation, '[^%^+-]([+-]?[+-])%d+')
-	local bonus = match(dice_notation, '[^%^+-][+-]?([+-]%d+)')
-	dice_INST.is_bonus_plural = double_bonus == '++' or double_bonus == '--' 
-	dice_INST.bonus = tonumber(bonus) or 0
+    local double_reroll = match(dice_notation, '[%^]([+-]?[+-])%d+')
+    local reroll = match(dice_notation, '[%^][+-]?([+-]%d+)')	
+    dice_INST.is_reroll_plural = double_reroll == '++' or double_reroll == '--' 
+    dice_INST.rerolls = tonumber(reroll) or 0	
 
-
-	local double_reroll = match(dice_notation, '[%^]([+-]?[+-])%d+')
-	local reroll = match(dice_notation, '[%^][+-]?([+-]%d+)')	
-	dice_INST.is_reroll_plural = double_reroll == '++' or double_reroll == '--' 
-	dice_INST.rerolls = tonumber(reroll) or 0	
-
-	dice_INST.sets = tonumber(match(dice_notation, '[x](%d+)')) or 1
-
-	dice_INST.minimum = minimum	
-
-	self.__index = self
-	return setmetatable(dice_INST, self)
+    dice_INST.sets = tonumber(match(dice_notation, '[x](%d+)')) or 1
+    dice_INST.minimum = minimum	
+    dice_INST.notation = dice_notation
+    
+    dice._cache[merged_notation] = setmetatable(dice_INST, self)
+  end
+  
+  return dice._cache[merged_notation]   
 end
 
---- Sets class global for dice minimum
---@tparam[opt] int value Sets dice class minimum result boundaries (if nil, no minimum result)
-function dice:setMin(value) self.minimum = value end
+--- Sets class minimum for dice module
+--@tparam[opt] int min Sets dice class minimum result boundaries (if nil, no minimum result)
+function dice.setClassMin(min) dice.class_minimum = min end
+
+--- Resets the cache for dice instances
+function dice.resetCache() dice._cache = {} end
 
 --- Number of total dice
--- @treturn int 
+-- @treturn int
 function dice:getNum() return self.num end
 
 --- Number of total faces on a dice
@@ -107,43 +117,18 @@ function dice:isDoubleReroll() return self.is_reroll_plural end
 -- @treturn bool
 function dice:isDoubleBonus() return self.is_bonus_plural end
 
---- Modifies bonus
--- @tparam int value
--- @treturn dice dice
-function dice:__add(value) self.bonus = self.bonus + value return self end
 
---- Modifies bonus
--- @tparam int value
--- @treturn dice
-function dice:__sub(value) self.bonus = self.bonus - value return self end
-
---- Modifies number of dice
--- @tparam int value
--- @treturn dice
-function dice:__mul(value) self.num = self.num + value return self end
-
---- Modifies amount of dice faces
--- @tparam int value
--- @treturn dice
-function dice:__div(value) self.faces = self.faces + value return self end
-
---- Modifies rerolls
--- @tparam int value
--- @treturn dice
-function dice:__pow(value) self.rerolls = self.rerolls + value return self end
-
---- Modifies dice sets
--- @tparam int value
--- @treturn dice
-function dice:__mod(value) self.sets = self.sets + value return self end
-
---- Gets a formatted dice string in roguelike notation
--- @treturn string
-function dice:__tostring()
-	local num_dice, dice_faces, bonus, is_bonus_plural, rerolls, is_reroll_plural, sets = self.num, self.faces, self.bonus, self.is_bonus_plural, self.rerolls, self.is_reroll_plural, self.sets
+-- local function used with our metamethods
+local function modifyNotation(dice_INST, field, value)
+  -- For the field that is about to be modfied the old value must be preserved
+  -- so the variables declared for the new dice_INST don't overwrite the old dice_INST 
+  local original_value = dice_INST[field]  -- save this so we can restore it later
+  dice_INST[field] = dice_INST[field] + value -- modfiy the field with added value
   
-	-- num_dice & dice_faces default to 1 if negative or 0!  
-	sets, num_dice, dice_faces = max(sets, 1), max(num_dice, 1), max(dice_faces, 1)
+  -- apply all fields to variables that will be used to generate our notation string
+  local num_dice, dice_faces, bonus, is_bonus_plural, rerolls, is_reroll_plural, sets, minimum = dice_INST.num, dice_INST.faces, dice_INST.bonus, dice_INST.is_bonus_plural, dice_INST.rerolls, dice_INST.is_reroll_plural, dice_INST.sets, dice_INST.minimum
+  
+  dice_INST[field] = original_value  -- restore the original value so that the supplied instance table is not modified  
   
 	local double_bonus = is_bonus_plural and (bonus >= 0 and '+' or '-') or ''
 	bonus = (bonus ~= 0 and double_bonus..format('%+d', bonus)) or ''  
@@ -151,8 +136,65 @@ function dice:__tostring()
 	local double_reroll = is_reroll_plural and (rerolls >= 0 and '+' or '-') or ''    
 	rerolls = (rerolls ~= 0 and '^'..double_reroll..format('%+d', rerolls)) or ''  
   
-  if sets > 1 then return '('..num_dice..'d'..dice_faces..bonus..rerolls..')x'..sets 
+  if sets > 1 then return '('..num_dice..'d'..dice_faces..bonus..rerolls..')x'..sets
   else return num_dice..'d'..dice_faces..bonus..rerolls
+  end  
+end
+
+--- Sets dice minimum for instance
+--@tparam[opt] int min Sets dice instance minimum result boundaries (if nil, no minimum result)
+function dice:setMin(min) return dice:new(self.notation, min) end
+
+--- Modifies bonus
+-- @tparam int value
+-- @treturn dice
+function dice:__add(value) return dice:new(modifyNotation(self, 'bonus', value), self.minimum) end
+
+--- Modifies bonus
+-- @tparam int value
+-- @treturn dice
+function dice:__sub(value) return dice:new(modifyNotation(self, 'bonus', -value), self.minimum) end
+
+--- Modifies number of dice
+-- @tparam int value
+-- @treturn dice
+function dice:__mul(value) return dice:new(modifyNotation(self, 'num', value), self.minimum) end
+
+--- Modifies amount of dice faces
+-- @tparam int value
+-- @treturn dice
+function dice:__div(value) return dice:new(modifyNotation(self, 'faces', value), self.minimum) end
+
+--- Modifies rerolls
+-- @tparam int value
+-- @treturn dice
+function dice:__pow(value) return dice:new(modifyNotation(self, 'rerolls', value), self.minimum) end
+
+--- Modifies dice sets
+-- @tparam int value
+-- @treturn dice
+function dice:__mod(value) return dice:new(modifyNotation(self, 'sets', value), self.minimum) end
+
+--- Gets a formatted dice string in roguelike notation
+-- @treturn string
+function dice:__tostring() 
+  if self.faces > 0 and self.sets > 0 and self.num > 0 then 
+    return self.notation 
+  else
+    local num_dice, dice_faces, bonus, is_bonus_plural, rerolls, is_reroll_plural, sets, minimum = self.num, self.faces, self.bonus, self.is_bonus_plural, self.rerolls, self.is_reroll_plural, self.sets, self.minimum
+    
+    --num_dice & dice_faces default to 1 if negative or 0!  
+    sets, num_dice, dice_faces = max(sets, 1), max(num_dice, 1), max(dice_faces, 1)
+    
+    local double_bonus = is_bonus_plural and (bonus >= 0 and '+' or '-') or ''
+    bonus = (bonus ~= 0 and double_bonus..format('%+d', bonus)) or ''  
+      
+    local double_reroll = is_reroll_plural and (rerolls >= 0 and '+' or '-') or ''    
+    rerolls = (rerolls ~= 0 and '^'..double_reroll..format('%+d', rerolls)) or ''  
+    
+    if sets > 1 then return '('..num_dice..'d'..dice_faces..bonus..rerolls..')x'..sets 
+    else return num_dice..'d'..dice_faces..bonus..rerolls
+    end      
   end  
 end
 
@@ -161,17 +203,32 @@ end
 -- @treturn dice
 function dice:__concat(pluralism_notation)
 	local str_b = match(pluralism_notation, '[+-][+-]?') or ''  
-	local bonus = ((str_b == '++' or str_b == '--') and 'double') or ((str_b == '+' or str_b == '-') and 'single') or nil
+	local bonus_indicator = ((str_b == '++' or str_b == '--') and 'double') or ((str_b == '+' or str_b == '-') and 'single') or nil
 
 	local str_r = match(pluralism_notation, '[%^][%^]?') or ''
-	local reroll = (str_r == '^^' and 'double') or (str_r == '^' and 'single') or nil
+	local reroll_indicator = (str_r == '^^' and 'double') or (str_r == '^' and 'single') or nil
   
-	if bonus == 'double' then self.is_bonus_plural = true
-	elseif bonus == 'single' then self.is_bonus_plural = false end
+  local num_dice, dice_faces, bonus, is_bonus_plural, rerolls, is_reroll_plural, sets, minimum = self.num, self.faces, self.bonus, self.is_bonus_plural, self.rerolls, self.is_reroll_plural, self.sets, self.minimum  
   
-	if reroll == 'double' then self.is_reroll_plural = true
-	elseif reroll == 'single' then self.is_reroll_plural = false end
-	return self
+	if bonus_indicator == 'double' then is_bonus_plural = true
+	elseif bonus_indicator == 'single' then is_bonus_plural = false end
+  
+	if reroll_indicator == 'double' then is_reroll_plural = true
+  elseif reroll_indicator == 'single' then is_reroll_plural = false end
+  
+	local double_bonus = is_bonus_plural and (bonus >= 0 and '+' or '-') or ''
+	bonus = (bonus ~= 0 and double_bonus..format('%+d', bonus)) or ''  
+    
+	local double_reroll = is_reroll_plural and (rerolls >= 0 and '+' or '-') or ''    
+	rerolls = (rerolls ~= 0 and '^'..double_reroll..format('%+d', rerolls)) or ''  
+  
+  local new_dice_notation
+  
+  if sets > 1 then new_dice_notation = '('..num_dice..'d'..dice_faces..bonus..rerolls..')x'..sets 
+  else new_dice_notation = num_dice..'d'..dice_faces..bonus..rerolls
+  end  
+
+	return dice:new(new_dice_notation, minimum)
 end
 
 --- Rolls the dice 
@@ -182,7 +239,7 @@ function dice.roll(self, minimum)
   local num_dice, dice_faces = self.num, self.faces 
   local bonus, rerolls = self.bonus, self.rerolls
   local is_bonus_plural, is_reroll_plural = self.is_bonus_plural, self.is_reroll_plural 
-  local sets, minimum = self.sets, self.minimum  
+  local sets, minimum = self.sets, self.minimum or dice.class_minimum  
   
   sets = max(sets, 1)  -- Minimum of 1 needed 
   local set_rolls = {}
@@ -212,9 +269,6 @@ function dice.roll(self, minimum)
     for _, number in ipairs(rolls) do total = total + number end
     set_rolls[i] = total    
   end
-
-  -- if minimum is empty then use dice class default min
-  if minimum == nil then minimum = dice.minimum end
 
   if minimum then
     for i=1, sets do
