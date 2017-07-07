@@ -43,8 +43,14 @@ function dice:new(dice_notation, minimum)
   -- If dice_notation is a number, we must convert it into the proper dice string format
   if type(dice_notation) ==  'number' then dice_notation = '1d'..dice_notation end
   
-  local dice_pattern = '[(]?[-]?%d+[d][-]?%d+[+-]?[+-]?%d*[%^]?[+-]?[+-]?%d*[)]?[x]?[-]?%d*'
-	assert(dice_notation == match(dice_notation, dice_pattern), "Dice string incorrectly formatted.") 
+  local dice_pattern = '[(]?[-]?%d+[d][-]?%d+[+-]?[+-]?%d*[%^]?[+-]?[+-]?%d*[)]?[x]?[-]?%d*'  
+	assert(dice_notation == match(dice_notation, dice_pattern), "Dice string incorrectly formatted.")
+
+  local bonus_notation = match(dice_notation, '[d][-]?%d+([+-]?[+-]%d+)')
+  if bonus_notation then assert(bonus_notation == match(bonus_notation, '[+-]+%d+'), "Dice string bonus portion incorrectly formatted.") end
+  
+  local reroll_notation = match(dice_notation, '[%^][+-]?[+-]?%d*')	
+  if reroll_notation then assert(reroll_notation == match(reroll_notation, '[%^][+-]+%d+'), "Dice string reroll portion incorrectly formatted.") end
   
   local merged_notation = dice_notation .. (minimum and '['..minimum..']' or '')
   
@@ -80,6 +86,10 @@ function dice.setClassMin(min) dice.class_minimum = min end
 
 --- Resets the cache for dice instances
 function dice.resetCache() dice._cache = {} end
+
+--- The raw notation including all negatives
+-- @treturn string
+function dice:getNotation() return self.notation end
 
 --- Number of total dice
 -- @treturn int
@@ -224,8 +234,8 @@ function dice:__concat(pluralism_notation)
   
   local new_dice_notation
   
-  if sets > 1 then new_dice_notation = '('..num_dice..'d'..dice_faces..bonus..rerolls..')x'..sets 
-  else new_dice_notation = num_dice..'d'..dice_faces..bonus..rerolls
+  if sets == 1 then new_dice_notation = num_dice..'d'..dice_faces..bonus..rerolls 
+  else new_dice_notation = '('..num_dice..'d'..dice_faces..bonus..rerolls..')x'..sets
   end  
 
 	return dice:new(new_dice_notation, minimum)
