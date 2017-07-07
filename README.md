@@ -18,4 +18,4 @@ The dice module provides the following:
 Unit Testing
 ------------
 
-An LuaUnit test is setup in the tests folder.  There are 15 different tests that check the metamethods, new instances, dice cache, and notation are all functioning.  To run these tests simply navigate to the test folder on your shell, and execute the command `lua dice_test.lua -v` to see the results.  
+A LuaUnit test is setup in the tests folder.  There are 15 different tests that check that the metamethods, new instances, dice cache, and notation are all functioning.  To run these tests simply navigate to the test folder on your shell, and execute the command `lua dice_test.lua -v` to see the results.  
