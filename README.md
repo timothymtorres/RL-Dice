@@ -15,3 +15,7 @@ The dice module provides the following:
 * Dice pluralism - enable bonus or rerolls to individual dice or to all dice 
 * Dice caching - reuses dice tables for faster performance
 
+Unit Testing
+------------
+
+An LuaUnit test is setup in the tests folder.  There are 15 different tests that check the metamethods, new instances, dice cache, and notation are all functioning.  To run these tests simply navigate to the test folder on your shell, and execute the command `lua dice_test.lua -v` to see the results.  
