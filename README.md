@@ -1,3 +1,7 @@
+[![github](https://img.shields.io/github/license/timothymtorres/RL-Dice.svg)](https://choosealicense.com/licenses/mit/)
+[![tags](https://img.shields.io/github/tag/timothymtorres/RL-dice.svg?label=version)](https://github.com/timothymtorres/RL-Dice/tags)
+[![commit](https://img.shields.io/github/last-commit/timothymtorres/rl-dice.svg)](https://github.com/timothymtorres/RL-Dice/commits/master)
+
 RL-Dice
 =======
 
