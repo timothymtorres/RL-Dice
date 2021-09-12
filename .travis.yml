@@ -24,7 +24,3 @@ script:
 
 after_success:
   - luacov-coveralls --exclude $TRAVIS_BUILD_DIR/lua_install
-
-branches:
-  except:
-    - gh-pages
