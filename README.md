@@ -1,3 +1,9 @@
+[![Build Status](https://app.travis-ci.com/timothymtorres/RL-Dice.svg?branch=master)](https://app.travis-ci.com/timothymtorres/RL-Dice)
+[![Coverage Status](https://coveralls.io/repos/github/timothymtorres/RL-Dice/badge.svg?branch=master)](https://coveralls.io/github/timothymtorres/RL-Dice?branch=master)
+[![github](https://img.shields.io/github/license/timothymtorres/RL-Dice.svg)](https://choosealicense.com/licenses/mit/)
+[![tags](https://img.shields.io/github/tag/timothymtorres/RL-dice.svg?label=version)](https://github.com/timothymtorres/RL-Dice/tags)
+[![commit](https://img.shields.io/github/last-commit/timothymtorres/rl-dice.svg)](https://github.com/timothymtorres/RL-Dice/commits/master)
+
 RL-Dice
 =======
 
@@ -10,9 +16,9 @@ The dice module provides the following:
 * Dice notation strings - used to create or roll dice instances
 * Dice number/faces - can be increased or decreased
 * Dice bonus - can be increased or decreased
-* Dice rerolls - can reroll and filter out via highest or lowest results 
+* Dice rerolls - can reroll and filter out via highest or lowest results
 * Dice sets - can return multiple results
-* Dice pluralism - enable bonus or rerolls to individual dice or to all dice 
+* Dice pluralism - enable bonus or rerolls to individual dice or to all dice
 * Dice caching - reuses dice tables for faster performance
 
 Unit Testing
