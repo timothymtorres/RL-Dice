@@ -19,6 +19,9 @@ install:
   - luarocks install luacov
   - luarocks install luacov-coveralls
 
+before_script:
+  - cd dice_test
+
 script:
   - lua dice_test.lua -v --coverage
 
