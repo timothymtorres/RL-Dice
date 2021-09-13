@@ -21,10 +21,11 @@ before_script:
   - cd tests
 
 script:
+  - lua -v -lluacov dice_test.lua
   - lua dice_test.lua -v
 
 after_success:
-  - luacov-coveralls --exclude $TRAVIS_BUILD_DIR/lua_install
+  - luacov-coveralls -v --include dice.lua
 
 branches:
   only:
