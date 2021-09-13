@@ -23,7 +23,7 @@ before_script:
   - cd tests
 
 script:
-  - lua dice_test.lua -v --coverage
+  - lua dice_test.lua -v
 
 after_success:
   - luacov-coveralls --exclude $TRAVIS_BUILD_DIR/lua_install
