@@ -9,6 +9,14 @@ RL-Dice
 
 A robust module to roll and manipulate roguelike dice.  This has also been included in [rotLove](https://github.com/paulofmandown/rotLove) roguelike toolkit which I highly recommend if you plan on making a roguelike.
 
+This library is compatible with:
+
+* Lua 5.1
+* Lua 5.2
+* Luajit 2.0
+* Luajit 2.1
+* Love2D
+
 Consult the [online documentation](https://timothymtorres.github.io/RL-Dice) for the API and usage examples.  
 
 The dice module provides the following:
