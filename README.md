@@ -1,5 +1,5 @@
-[![Build Status](https://app.travis-ci.com/timothymtorres/RL-Dice.svg?branch=master)](https://app.travis-ci.com/timothymtorres/RL-Dice)
-[![Coverage Status](https://coveralls.io/repos/github/timothymtorres/RL-Dice/badge.svg?branch=master)](https://coveralls.io/github/timothymtorres/RL-Dice?branch=master)
+[![Build Status](https://app.travis-ci.com/timothymtorres/RL-Dice.svg)](https://app.travis-ci.com/timothymtorres/RL-Dice)
+[![Coverage Status](https://coveralls.io/repos/github/timothymtorres/RL-Dice/badge.svg)](https://coveralls.io/github/timothymtorres/RL-Dice)
 [![github](https://img.shields.io/github/license/timothymtorres/RL-Dice.svg)](https://choosealicense.com/licenses/mit/)
 [![tags](https://img.shields.io/github/tag/timothymtorres/RL-dice.svg?label=version)](https://github.com/timothymtorres/RL-Dice/tags)
 [![commit](https://img.shields.io/github/last-commit/timothymtorres/rl-dice.svg)](https://github.com/timothymtorres/RL-Dice/commits/master)
@@ -8,6 +8,14 @@ RL-Dice
 =======
 
 A robust module to roll and manipulate roguelike dice.  This has also been included in [rotLove](https://github.com/paulofmandown/rotLove) roguelike toolkit which I highly recommend if you plan on making a roguelike.
+
+This library is compatible with:
+
+* Lua 5.1
+* Lua 5.2
+* Luajit 2.0
+* Luajit 2.1
+* Love2D
 
 Consult the [online documentation](https://timothymtorres.github.io/RL-Dice) for the API and usage examples.  
 

@@ -4,8 +4,6 @@ sudo: false
 env:
   - LUA="lua=5.1"
   - LUA="lua=5.2"
-  - LUA="lua=5.3"
-  - LUA="lua=5.4"
   - LUA="luajit=2.0"
   - LUA="luajit=2.1"
 
@@ -19,11 +17,15 @@ install:
   - luarocks install luacov
   - luarocks install luacov-coveralls
 
+before_script:
+  - cd tests
+
 script:
-  - lua dice_test.lua -v --coverage
+  - lua -v -lluacov dice_test.lua
+  - lua dice_test.lua -v
 
 after_success:
-  - luacov-coveralls --exclude $TRAVIS_BUILD_DIR/lua_install
+  - luacov-coveralls -v --include dice.lua
 
 branches:
   only:
